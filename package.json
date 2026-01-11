@@ -7,7 +7,7 @@
     "dev": "nuxt dev",
     "preview": "nuxt preview",
     "postinstall": "NUXT_PREPARE=1 nuxt prepare",
-    "typecheck": "nuxt typecheck",
+    "typecheck": "NUXT_PREPARE=1 nuxt typecheck",
     "lint": "oxlint --type-aware",
     "lint:fix": "oxlint --fix",
     "format": "oxfmt",

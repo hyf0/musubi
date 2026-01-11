@@ -56,6 +56,13 @@ export class Website {
         map.set(data.slug, page)
       }
     }
+
+    for (const [key, value] of map) {
+      console.log(
+        `Post slug map: ${key} -> ${JSON.stringify(await value.toMusubiPageData(), null, 2)}`,
+      )
+    }
+
     return map
   }
 
@@ -137,6 +144,7 @@ export class Website {
     }
 
     const data = await page.toMusubiPageData()
+    console.log('getPostBySlug', slug, data)
     const recordMap = await page.getRecordMap()
 
     return {

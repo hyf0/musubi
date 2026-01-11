@@ -1,7 +1,8 @@
 import { Website } from '~~/shared/website/Website'
+import { WEBSITE_DATA_KEY } from '~/utils/keysForUseAsyncData'
 
 export async function useWebsiteData() {
-  const ret = await useAsyncData(async () => {
+  const ret = await useAsyncData(WEBSITE_DATA_KEY, async () => {
     const website = Website.getInstance()
     const [postMetaList, contentPages] = await Promise.all([
       website.getPostMetaList(),

@@ -1,15 +1,15 @@
 <script setup lang="ts">
 const pageDataRet = await useContentPageData()
-const websiteDataRet = await useWebsiteData()
+const websiteConfigRet = await useWebsiteConfig()
 const pageData = assertNonNull(pageDataRet.data.value)
-const websiteData = assertNonNull(websiteDataRet.data.value)
+const websiteConfig = assertNonNull(websiteConfigRet.data.value)
 
 const pageMeta = pageData.meta
 </script>
 
 <template>
   <Head>
-    <Title>{{ pageMeta.title }} | {{ websiteData.config.title }}</Title>
+    <Title>{{ pageMeta.title }} | {{ websiteConfig.title }}</Title>
   </Head>
   <article class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
     <header class="mb-8 pb-4 border-b border-[var(--color-border-muted)]">

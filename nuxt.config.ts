@@ -1,5 +1,7 @@
 import tailwindcss from '@tailwindcss/vite'
-import websiteConfig from './knot.config'
+import { resolveKnotConfig } from './shared/website/resolveKnotConfig'
+
+const websiteConfig = await resolveKnotConfig()
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({

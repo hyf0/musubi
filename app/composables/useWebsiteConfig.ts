@@ -1,7 +1,8 @@
+import { resolveKnotConfig } from '~~/shared/website/resolveKnotConfig'
+
 export async function useWebsiteConfig() {
   const ret = await useAsyncData(async () => {
-    const { default: websiteConfig } = await import('~~/knot.config')
-    return websiteConfig
+    return await resolveKnotConfig()
   })
 
   if (ret.error.value) {

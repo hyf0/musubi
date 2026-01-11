@@ -1,5 +1,4 @@
 import { Website } from '~~/shared/website/Website'
-import websiteConfig from '~~/knot.config'
 
 export async function useWebsiteData() {
   const ret = await useAsyncData(async () => {
@@ -11,7 +10,6 @@ export async function useWebsiteData() {
     return {
       postMetaList,
       contentPages,
-      config: websiteConfig,
     }
   })
 

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const websiteDataRet = await useWebsiteData()
+const websiteConfigRet = await useWebsiteConfig()
 const websiteData = assertNonNull(websiteDataRet.data.value)
+const websiteConfig = assertNonNull(websiteConfigRet.data.value)
 
 function formatDate(dateString: string) {
   const date = new Date(dateString)
@@ -14,7 +16,7 @@ function formatDate(dateString: string) {
 
 <template>
   <Head>
-    <Title>{{ websiteData.config.title }}</Title>
+    <Title>{{ websiteConfig.title }}</Title>
   </Head>
   <div class="max-w-4xl mx-auto py-8">
     <div

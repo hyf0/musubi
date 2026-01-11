@@ -14,6 +14,8 @@
     "format:check": "oxfmt --check"
   },
   "dependencies": {
+  },
+  "devDependencies": {
     "@nuxtjs/color-mode": "4.0.0",
     "@nuxtjs/tailwindcss": "6.14.0",
     "@tailwindcss/vite": "^4.1.18",
@@ -27,9 +29,7 @@
     "react-notion-x": "^7.7.3",
     "tailwindcss": "^4.1.18",
     "vue": "^3.5.25",
-    "vue-router": "^4.6.3"
-  },
-  "devDependencies": {
+    "vue-router": "^4.6.3",
     "@iconify-json/mdi": "^1.2.3",
     "@types/node": "^25.0.3",
     "@types/react": "^19.2.7",
@@ -42,7 +42,8 @@
     "react-tweet": "^3.3.0",
     "react-tweet-embed": "^2.0.0",
     "typescript": "^5.9.3",
-    "unplugin-icons": "^22.5.0"
+    "unplugin-icons": "^22.5.0",
+    "vue-tsc": "^3.2.2"
   },
   "packageManager": "pnpm@10.24.0+sha512.01ff8ae71b4419903b65c60fb2dc9d34cf8bb6e06d03bde112ef38f7a34d6904c424ba66bea5cdcf12890230bf39f9580473140ed9c946fef328b6e5238a345a"
 }

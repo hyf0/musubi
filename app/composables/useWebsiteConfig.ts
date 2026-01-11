@@ -1,8 +1,8 @@
-import { resolveKnotConfig } from '~~/shared/website/resolveKnotConfig'
+import { resolveWebsiteConfig } from '~~/shared/website/resolveWebsiteConfig'
 
 export async function useWebsiteConfig() {
   const ret = await useAsyncData(async () => {
-    return await resolveKnotConfig()
+    return await resolveWebsiteConfig()
   })
 
   if (ret.error.value) {

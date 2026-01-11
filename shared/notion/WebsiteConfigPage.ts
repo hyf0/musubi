@@ -1,7 +1,7 @@
 import { NotionDatabasePage } from './NotionDatabasePage'
 import { NotionStandalonePage } from './NotionStandalonePage'
 
-export class KnotConfigPage extends NotionDatabasePage {
+export class WebsiteConfigPage extends NotionDatabasePage {
   /**
    * Parse the Name/Value database rows into a plain object
    * Values are JSON.parsed if valid, otherwise kept as raw strings

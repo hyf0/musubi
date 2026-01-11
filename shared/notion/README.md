@@ -1,6 +1,6 @@
 # Notion Page Classes
 
-Object-oriented API for working with Notion pages in Knot.
+Object-oriented API for working with Notion pages in Musubi.
 
 ## Classes
 

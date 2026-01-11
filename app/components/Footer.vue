@@ -18,10 +18,10 @@ const websiteConfig = assertNonNull(websiteConfigRet.data.value)
           <p class="flex items-center gap-1">
             Powered by
             <a
-              href="https://github.com/yunfeihe/knot"
+              href="https://github.com/hyf0/musubi"
               target="_blank"
               class="font-semibold text-[var(--color-fg-default)] hover:text-[var(--color-accent-fg)] no-underline"
-              >Knot</a
+              >Musubi</a
             >
           </p>
         </div>

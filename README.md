@@ -2,7 +2,7 @@
   <i>Tie your thoughts, publish them quietly.</i>
 </p>
 
-# knot / 绳结
+# Musubi / 結縄
 
 A peronsal website/blog framework using Notion as a CMS, powered by Nuxt.
 
@@ -13,7 +13,7 @@ A peronsal website/blog framework using Notion as a CMS, powered by Nuxt.
 
 ## Credits
 
-The Knot project is heavily inspired by:
+The Musubi project is heavily inspired by:
 
 - [Nobelium](https://github.com/craigary/nobelium)
 - [Next.js Notion Starter Kit](https://github.com/transitive-bullshit/nextjs-notion-starter-kit)

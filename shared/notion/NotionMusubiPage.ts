@@ -1,6 +1,6 @@
 import { NotionStandalonePage } from './NotionStandalonePage'
 
-export interface KnotPageData {
+export interface MusubiPageData {
   pageId: string
   title: string
   slug: string
@@ -10,12 +10,12 @@ export interface KnotPageData {
   tags: string[]
 }
 
-export class NotionKnotPage extends NotionStandalonePage {
+export class NotionMusubiPage extends NotionStandalonePage {
   constructor(pageId: string) {
     super(pageId)
   }
 
-  async toKnotPageData(): Promise<KnotPageData> {
+  async toMusubiPageData(): Promise<MusubiPageData> {
     const [title, slug, date, status, type, tags] = await Promise.all([
       this.getPropAsString('Title'),
       this.getPropAsString('Slug'),

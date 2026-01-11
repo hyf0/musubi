@@ -1,4 +1,4 @@
-export interface KnotConfig {
+export interface WebsiteConfig {
   title?: string
   description?: string
   author?: string

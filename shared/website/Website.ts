@@ -7,7 +7,7 @@
  */
 
 import { NotionDatabasePage } from '~~/shared/notion/NotionDatabasePage'
-import { NotionKnotPage } from '~~/shared/notion/NotionKnotPage'
+import { NotionMusubiPage } from '~~/shared/notion/NotionMusubiPage'
 import type { PostMeta } from '~~/shared/website/types/PostMeta'
 import type { Post } from '~~/shared/website/types'
 
@@ -15,9 +15,9 @@ export class Website {
   private static instance: Website | null = null
   #databaseId: string
   #databasePage: NotionDatabasePage
-  #allKnotPagesPromise?: Promise<NotionKnotPage[]>
-  #postPageBySlugPromise?: Promise<Map<string, NotionKnotPage>>
-  #contentPageBySlugPromise?: Promise<Map<string, NotionKnotPage>>
+  #allMusubiPagesPromise?: Promise<NotionMusubiPage[]>
+  #postPageBySlugPromise?: Promise<Map<string, NotionMusubiPage>>
+  #contentPageBySlugPromise?: Promise<Map<string, NotionMusubiPage>>
 
   private constructor() {
     const datbasePageId = process.env.NOTION_DATABASE_PAGE_ID || ''
@@ -38,20 +38,20 @@ export class Website {
     return Website.instance
   }
 
-  async #fetchAllKnotPagesCached() {
-    if (!this.#allKnotPagesPromise) {
-      this.#allKnotPagesPromise = this.#databasePage
+  async #fetchAllMusubiPagesCached() {
+    if (!this.#allMusubiPagesPromise) {
+      this.#allMusubiPagesPromise = this.#databasePage
         .childPageIds()
-        .then((ids) => ids.map((id) => new NotionKnotPage(id)))
+        .then((ids) => ids.map((id) => new NotionMusubiPage(id)))
     }
-    return this.#allKnotPagesPromise
+    return this.#allMusubiPagesPromise
   }
 
   async #createPostBySlugMap() {
-    const map = new Map<string, NotionKnotPage>()
-    const pages = await this.#fetchAllKnotPagesCached()
+    const map = new Map<string, NotionMusubiPage>()
+    const pages = await this.#fetchAllMusubiPagesCached()
     for (const page of pages) {
-      const data = await page.toKnotPageData()
+      const data = await page.toMusubiPageData()
       if (data.type === 'Post') {
         map.set(data.slug, page)
       }
@@ -60,10 +60,10 @@ export class Website {
   }
 
   async #createContentPageBySlugMap() {
-    const map = new Map<string, NotionKnotPage>()
-    const pages = await this.#fetchAllKnotPagesCached()
+    const map = new Map<string, NotionMusubiPage>()
+    const pages = await this.#fetchAllMusubiPagesCached()
     for (const page of pages) {
-      const data = await page.toKnotPageData()
+      const data = await page.toMusubiPageData()
       if (data.type === 'Content') {
         map.set(data.slug, page)
       }
@@ -94,11 +94,11 @@ export class Website {
    * @throws Error if any page has invalid/missing required properties
    */
   async getPostMetaList(): Promise<PostMeta[]> {
-    const pages = await this.#fetchAllKnotPagesCached()
+    const pages = await this.#fetchAllMusubiPagesCached()
     const posts: PostMeta[] = []
 
     for (const page of pages) {
-      const data = await page.toKnotPageData()
+      const data = await page.toMusubiPageData()
 
       // Skip non-posts and drafts
       if (data.type !== 'Post' || data.status === 'draft') {
@@ -110,7 +110,7 @@ export class Website {
         title: data.title,
         slug: data.slug,
         date: data.date,
-        description: '', // Not in KnotPageData yet
+        description: '', // Not in MusubiPageData yet
         tags: data.tags,
       })
     }
@@ -136,7 +136,7 @@ export class Website {
       throw new Error(`Blog post with slug '${slug}' not found in Notion database`)
     }
 
-    const data = await page.toKnotPageData()
+    const data = await page.toMusubiPageData()
     const recordMap = await page.getRecordMap()
 
     return {
@@ -145,7 +145,7 @@ export class Website {
         title: data.title,
         slug: data.slug,
         date: data.date,
-        description: '', // Not in KnotPageData yet
+        description: '', // Not in MusubiPageData yet
         tags: data.tags,
       },
       recordMap,
@@ -160,11 +160,11 @@ export class Website {
    * @returns Array of PostMeta objects sorted by title
    */
   async getContentPages(): Promise<PostMeta[]> {
-    const pages = await this.#fetchAllKnotPagesCached()
+    const pages = await this.#fetchAllMusubiPagesCached()
     const contentPages: PostMeta[] = []
 
     for (const page of pages) {
-      const data = await page.toKnotPageData()
+      const data = await page.toMusubiPageData()
 
       // Skip non-content pages and drafts
       if (data.type !== 'Content' || data.status === 'draft') {
@@ -200,7 +200,7 @@ export class Website {
       throw new Error(`Content page with slug '${slug}' not found in Notion database`)
     }
 
-    const data = await page.toKnotPageData()
+    const data = await page.toMusubiPageData()
     const recordMap = await page.getRecordMap()
 
     return {

@@ -9,6 +9,7 @@ import 'prismjs/components/prism-rust.js'
 
 const props = defineProps<{
   recordMap: ExtendedRecordMap
+  pageId: string
   darkMode?: boolean
 }>()
 const rootDomElmRef = useTemplateRef<HTMLDivElement>('root')
@@ -41,11 +42,14 @@ function createNotionRendererElement(darkMode?: boolean, onHydrationCompleted?: 
 
 const notionRendererElmRef = computed(() => createNotionRendererElement(props.darkMode))
 
-const serverRenderedNotionHtmlRet = await useAsyncData(async () => {
-  const { renderToString } = await import('react-dom/server')
-  const html = renderToString(notionRendererElmRef.value)
-  return { html, darkMode: props.darkMode ?? false }
-})
+const serverRenderedNotionHtmlRet = await useAsyncData(
+  createNotionPageKey(props.pageId),
+  async () => {
+    const { renderToString } = await import('react-dom/server')
+    const html = renderToString(notionRendererElmRef.value)
+    return { html, darkMode: props.darkMode ?? false }
+  },
+)
 
 const { html: serverRenderedNotionHtml, darkMode: serverDarkMode } = assertNonNull(serverRenderedNotionHtmlRet.data.value)
 

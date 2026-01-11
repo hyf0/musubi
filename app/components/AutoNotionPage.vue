@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { ExtendedRecordMap } from 'notion-types';
 
-const props  = defineProps<{
+const props = defineProps<{
   recordMap: ExtendedRecordMap
+  pageId: string
 }>()
 
 const colorMode = useColorMode()
@@ -13,5 +14,5 @@ const isDark = computed(() => {
 </script>
 
 <template>
-  <NotionPage :dark-mode="isDark" :record-map="props.recordMap" />
+  <NotionPage :dark-mode="isDark" :record-map="props.recordMap" :page-id="props.pageId" />
 </template>

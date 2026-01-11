@@ -32,6 +32,6 @@ const date = new Date(postMeta.date).toLocaleDateString('en-US', {
       </div>
     </header>
 
-    <AutoNotionPage :record-map="postData.recordMap" />
+    <AutoNotionPage :record-map="postData.recordMap" :page-id="postData.meta.pageId" />
   </article>
 </template>

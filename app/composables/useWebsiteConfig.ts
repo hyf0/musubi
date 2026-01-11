@@ -1,7 +1,8 @@
+import { WEBSITE_CONFIG_KEY } from '~/utils/keysForUseAsyncData'
 import { resolveWebsiteConfig } from '~~/shared/website/resolveWebsiteConfig'
 
 export async function useWebsiteConfig() {
-  const ret = await useAsyncData(async () => {
+  const ret = await useAsyncData(WEBSITE_CONFIG_KEY, async () => {
     return await resolveWebsiteConfig()
   })
 

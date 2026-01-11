@@ -18,6 +18,6 @@ const pageMeta = pageData.meta
       </h1>
     </header>
 
-    <AutoNotionPage :record-map="pageData.recordMap" />
+    <AutoNotionPage :record-map="pageData.recordMap" :page-id="pageData.meta.pageId" />
   </article>
 </template>

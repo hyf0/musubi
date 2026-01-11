@@ -20,10 +20,10 @@ export class Website {
   #contentPageBySlugPromise?: Promise<Map<string, NotionKnotPage>>
 
   private constructor() {
-    const datbasePageId = process.env.NOTION_DATABASE_ID || ''
+    const datbasePageId = process.env.NOTION_DATABASE_PAGE_ID || ''
 
     if (!datbasePageId) {
-      throw new Error('NOTION_DATABASE_ID environment variable is not set')
+      throw new Error('NOTION_DATABASE_PAGE_ID environment variable is not set')
     }
 
     this.#databaseId = datbasePageId

@@ -1,7 +1,7 @@
-import { NotionDatabasePage } from './NotionDatabasePage'
-import { NotionStandalonePage } from './NotionStandalonePage'
+import { NotionDatabasePage } from '../notion/NotionDatabasePage'
+import { NotionStandalonePage } from '../notion/NotionStandalonePage'
 
-export class WebsiteConfigPage extends NotionDatabasePage {
+export class ConfigPage extends NotionDatabasePage {
   /**
    * Parse the Name/Value database rows into a plain object
    * Values are JSON.parsed if valid, otherwise kept as raw strings

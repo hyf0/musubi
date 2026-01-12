@@ -1,4 +1,4 @@
-import { NotionStandalonePage } from './NotionStandalonePage'
+import { NotionStandalonePage } from '../notion/NotionStandalonePage'
 
 export interface MusubiPageData {
   pageId: string
@@ -10,7 +10,7 @@ export interface MusubiPageData {
   tags: string[]
 }
 
-export class NotionMusubiPage extends NotionStandalonePage {
+export class MusubiPage extends NotionStandalonePage {
   constructor(pageId: string) {
     super(pageId)
   }

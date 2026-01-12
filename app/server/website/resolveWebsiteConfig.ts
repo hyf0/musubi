@@ -1,5 +1,5 @@
 import type { WebsiteConfig } from './types/WebsiteConfig'
-import { WebsiteConfigPage } from '../notion/WebsiteConfigPage'
+import { ConfigPage } from '../musubi-notion/ConfigPage'
 
 export async function resolveWebsiteConfig(): Promise<WebsiteConfig> {
   const configPageId = process.env.NOTION_CONFIG_PAGE_ID
@@ -11,6 +11,6 @@ export async function resolveWebsiteConfig(): Promise<WebsiteConfig> {
   }
 
   // Fetch and return remote config (errors propagate)
-  const configPage = new WebsiteConfigPage(configPageId)
+  const configPage = new ConfigPage(configPageId)
   return (await configPage.toObject()) as WebsiteConfig
 }

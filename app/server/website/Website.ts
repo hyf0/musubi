@@ -7,7 +7,7 @@
  */
 
 import { NotionDatabasePage } from '~~/app/server/notion/NotionDatabasePage'
-import { NotionMusubiPage } from '~~/app/server/notion/NotionMusubiPage'
+import { MusubiPage } from '~/server/musubi-notion/MusubiPage'
 import type { PostMeta } from '~~/app/server/website/types/PostMeta'
 import type { Post } from '~~/app/server/website/types'
 
@@ -15,9 +15,9 @@ export class Website {
   private static instance: Website | null = null
   #databaseId: string
   #databasePage: NotionDatabasePage
-  #allMusubiPagesPromise?: Promise<NotionMusubiPage[]>
-  #postPageBySlugPromise?: Promise<Map<string, NotionMusubiPage>>
-  #contentPageBySlugPromise?: Promise<Map<string, NotionMusubiPage>>
+  #allMusubiPagesPromise?: Promise<MusubiPage[]>
+  #postPageBySlugPromise?: Promise<Map<string, MusubiPage>>
+  #contentPageBySlugPromise?: Promise<Map<string, MusubiPage>>
 
   private constructor() {
     const datbasePageId = process.env.NOTION_DATABASE_PAGE_ID || ''
@@ -42,13 +42,13 @@ export class Website {
     if (!this.#allMusubiPagesPromise) {
       this.#allMusubiPagesPromise = this.#databasePage
         .childPageIds()
-        .then((ids) => ids.map((id) => new NotionMusubiPage(id)))
+        .then((ids) => ids.map((id) => new MusubiPage(id)))
     }
     return this.#allMusubiPagesPromise
   }
 
   async #createPostBySlugMap() {
-    const map = new Map<string, NotionMusubiPage>()
+    const map = new Map<string, MusubiPage>()
     const pages = await this.#fetchAllMusubiPagesCached()
     for (const page of pages) {
       const data = await page.toMusubiPageData()
@@ -61,7 +61,7 @@ export class Website {
   }
 
   async #createContentPageBySlugMap() {
-    const map = new Map<string, NotionMusubiPage>()
+    const map = new Map<string, MusubiPage>()
     const pages = await this.#fetchAllMusubiPagesCached()
     for (const page of pages) {
       const data = await page.toMusubiPageData()

@@ -8,6 +8,7 @@
 import { NotionAPI } from 'notion-client'
 import { type ExtendedRecordMap } from 'notion-types'
 import { getPageProperty } from 'notion-utils'
+import { readCache, shouldUpdateTestCache, shouldUseTestCache, writeCache } from './cache'
 
 // Shared Notion client instance for efficiency
 const sharedNotion = new NotionAPI()
@@ -24,11 +25,25 @@ export class NotionStandalonePage {
 
   private async fetchRecordMapCached(): Promise<ExtendedRecordMap> {
     if (!this.recordMapPromise) {
-      this.recordMapPromise = this.notion.getPage(this.pageId, {
-        fetchMissingBlocks: true,
-        fetchCollections: true,
-        signFileUrls: true,
-      })
+      this.recordMapPromise = (async () => {
+        if (shouldUseTestCache()) {
+          const cached = await readCache(this.pageId)
+          if (!cached) {
+            throw new Error(`Cache miss for page ${this.pageId}`)
+          }
+          return cached
+        }
+
+        const recordMap = await this.notion.getPage(this.pageId, {
+          fetchMissingBlocks: true,
+          fetchCollections: true,
+          signFileUrls: true,
+        })
+        if (shouldUpdateTestCache()) {
+          await writeCache(this.pageId, recordMap)
+        }
+        return recordMap
+      })()
     }
     return this.recordMapPromise
   }

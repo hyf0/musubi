@@ -4,6 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "nuxt generate",
+    "verify:build": "USE_TEST_CACHE=1 nuxt generate",
+    "cache:update": "UPDATE_TEST_CACHE=1 nuxt generate",
     "dev": "nuxt dev",
     "preview": "nuxt preview",
     "postinstall": "NUXT_PREPARE=1 nuxt prepare",
@@ -22,6 +24,7 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vueuse/core": "^14.1.0",
+    "compress-json": "^3.4.0",
     "consola": "^3.4.2",
     "notion-client": "^7.7.3",
     "notion-types": "^7.7.3",

@@ -32,6 +32,9 @@ importers:
       '@vueuse/core':
         specifier: ^14.1.0
         version: 14.1.0(vue@3.5.25(typescript@5.9.3))
+      compress-json:
+        specifier: ^3.4.0
+        version: 3.4.0
       consola:
         specifier: ^3.4.2
         version: 3.4.2
@@ -1948,6 +1951,9 @@ packages:
   compress-commons@6.0.2:
     resolution: {integrity: sha512-6FqVXeETqWPoGcfzrXb37E50NP0LXT8kAMu5ooZayhWWdgEY4lBEEcbQNXtkuKQsGduxiIcI4gOTsxTmuq/bSg==}
     engines: {node: '>= 14'}
+
+  compress-json@3.4.0:
+    resolution: {integrity: sha512-SxT8uFOacRbP3gfi4aVAulr4KzE933eZWBguVBwuVWv3GTGQAToqpq8rFtdbIVgeCOH7RpPuXKQrPPd087b8uA==}
 
   concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
@@ -6335,6 +6341,8 @@ snapshots:
       is-stream: 2.0.1
       normalize-path: 3.0.0
       readable-stream: 4.7.0
+
+  compress-json@3.4.0: {}
 
   concat-map@0.0.1: {}
 

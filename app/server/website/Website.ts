@@ -102,7 +102,7 @@ export class Website {
       const data = await page.toMusubiPageData()
 
       // Skip non-posts and drafts
-      if (data.type !== 'Post' || data.status === 'draft') {
+      if (data.type !== 'Post' || data.status === 'Draft') {
         continue
       }
 
@@ -168,7 +168,7 @@ export class Website {
       const data = await page.toMusubiPageData()
 
       // Skip non-content pages and drafts
-      if (data.type !== 'Content' || data.status === 'draft') {
+      if (data.type !== 'Content' || data.status === 'Draft') {
         continue
       }
 

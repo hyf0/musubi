@@ -1,7 +1,10 @@
-const logger: typeof import('consola').Consola = import.meta.server
-  ? require('consola').consola
+import { consola } from 'consola'
+import type { ConsolaInstance } from 'consola'
+
+const logger: ConsolaInstance = import.meta.server
+  ? consola
   : new Proxy(
-      {},
+      {} as ConsolaInstance,
       {
         get() {
           return () => {}

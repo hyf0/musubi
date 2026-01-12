@@ -1,11 +1,12 @@
 import { NotionStandalonePage } from '../notion/NotionStandalonePage'
+import logger from '~/utils/logger'
 
 export interface MusubiPageData {
   pageId: string
   title: string
   slug: string
   date: string // ISO date string (YYYY-MM-DD)
-  status: 'published' | 'draft'
+  status: 'Published' | 'Draft'
   type: 'Post' | 'Content'
   tags: string[]
 }
@@ -25,8 +26,13 @@ export class MusubiPage extends NotionStandalonePage {
       this.getPropAsTags('Tags'),
     ])
 
-    if (status !== 'published' && status !== 'draft') {
-      throw new Error(`Invalid status "${status}", expected "published" or "draft"`)
+    let validatedStatus: 'Published' | 'Draft' = 'Draft'
+    if (status === 'Published' || status === 'Draft') {
+      validatedStatus = status
+    } else {
+      logger.warn(
+        `[MusubiPage] Invalid or missing status "${status}" for page: title="${title}", slug="${slug}", pageId="${this.getPageId()}". Defaulting to "Draft".`,
+      )
     }
 
     if (type !== 'Post' && type !== 'Content') {
@@ -38,7 +44,7 @@ export class MusubiPage extends NotionStandalonePage {
       title,
       slug,
       date: date.toISOString().split('T')[0] as string,
-      status,
+      status: validatedStatus,
       type,
       tags,
     }

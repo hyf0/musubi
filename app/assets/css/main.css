@@ -1,8 +1,5 @@
-@import 'tailwindcss';
 @import 'react-notion-x/src/styles.css';
 @import 'prismjs/themes/prism-tomorrow.css';
-
-@custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
   :root {

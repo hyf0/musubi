@@ -1,4 +1,3 @@
-import tailwindcss from '@tailwindcss/vite'
 import { resolveWebsiteConfig } from './app/server/website/resolveWebsiteConfig'
 
 const websiteConfig = await resolveWebsiteConfig()
@@ -6,7 +5,7 @@ const websiteConfig = await resolveWebsiteConfig()
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
-  modules: ['unplugin-icons/nuxt', '@nuxtjs/color-mode'],
+  modules: ['@unocss/nuxt', 'unplugin-icons/nuxt', '@nuxtjs/color-mode'],
   devtools: { enabled: true },
   ssr: true,
   typescript: {
@@ -18,7 +17,6 @@ export default defineNuxtConfig({
   },
   css: ['./app/assets/css/main.css'],
   vite: {
-    plugins: [tailwindcss()],
     css: {
       modules: {
         localsConvention: 'camelCase',

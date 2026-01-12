@@ -6,7 +6,6 @@
 - **Dev**: `pnpm dev` (starts server on localhost:3000)
 - **Build**: `pnpm build` (static site generation)
 - **Preview**: `pnpm preview` (preview production build)
-- **Note**: No test or lint commands configured yet
 
 ## Code Style
 
@@ -30,9 +29,17 @@
 
 MANDATORY: Always run verification commands after making changes.
 
-- **Type Checking**: `pnpm typecheck` (checks type errors)
-- **Linting**: `pnpm lint` (checks linting issues)
-- **Formatting**: `pnpm format` (formats code according to style guidelines)
+- **Type Checking**: `pnpm check:types` (checks type errors with vue-tsc)
+- **Linting**: `pnpm check:lint` (checks linting issues with oxlint)
+- **Format Check**: `pnpm check:format` (checks formatting with oxfmt)
+- **Build**: `pnpm check:build` (verifies build with test cache)
+
+To auto-fix issues:
+
+- **Fix Lint**: `pnpm fix:lint` (auto-fix linting issues)
+- **Fix Format**: `pnpm fix:format` (auto-format code)
+
+**Tip**: Use Bash sub-agents to run commands in parallel for faster verification.
 
 # Common Pitfalls & Best Practices
 

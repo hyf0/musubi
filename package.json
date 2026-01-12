@@ -3,17 +3,17 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "postinstall": "NUXT_PREPARE=1 nuxt typecheck",
     "build": "nuxt generate",
-    "verify:build": "USE_TEST_CACHE=1 nuxt generate",
-    "cache:update": "UPDATE_TEST_CACHE=1 nuxt generate",
     "dev": "nuxt dev",
     "preview": "nuxt preview",
-    "postinstall": "NUXT_PREPARE=1 nuxt prepare",
-    "typecheck": "NUXT_PREPARE=1 nuxt typecheck",
-    "lint": "oxlint --type-aware",
-    "lint:fix": "oxlint --fix",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check"
+    "check:build": "USE_TEST_CACHE=1 nuxt generate",
+    "check:types": "vue-tsc --noEmit",
+    "check:lint": "oxlint --type-aware",
+    "check:format": "oxfmt --check",
+    "fix:lint": "oxlint --fix",
+    "fix:format": "oxfmt",
+    "cache:update": "UPDATE_TEST_CACHE=1 nuxt generate"
   },
   "devDependencies": {
     "@iconify-json/mdi": "^1.2.3",

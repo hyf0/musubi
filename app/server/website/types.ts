@@ -1,5 +1,5 @@
 import type { ExtendedRecordMap } from 'notion-types'
-import type { PostMeta } from '~~/shared/website/types/PostMeta'
+import type { PostMeta } from '~~/app/server/website/types/PostMeta'
 
 export interface Post {
   meta: PostMeta

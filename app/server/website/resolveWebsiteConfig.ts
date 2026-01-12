@@ -1,12 +1,12 @@
 import type { WebsiteConfig } from './types/WebsiteConfig'
-import { WebsiteConfigPage } from '../../shared/notion/WebsiteConfigPage'
+import { WebsiteConfigPage } from '../notion/WebsiteConfigPage'
 
 export async function resolveWebsiteConfig(): Promise<WebsiteConfig> {
   const configPageId = process.env.NOTION_CONFIG_PAGE_ID
 
   // If no remote config is configured, use local config
   if (!configPageId || process.env.NUXT_PREPARE) {
-    const { default: localConfig } = await import('../../website.config')
+    const { default: localConfig } = await import('../../../website.config')
     return localConfig
   }
 

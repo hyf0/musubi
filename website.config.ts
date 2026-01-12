@@ -1,4 +1,4 @@
-import type { WebsiteConfig } from './shared/website/types/WebsiteConfig'
+import type { WebsiteConfig } from './app/server/website/types/WebsiteConfig'
 
 export default {
   title: 'Musubi - A Notion CMS Blog Framework',

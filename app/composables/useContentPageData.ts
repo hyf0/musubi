@@ -1,5 +1,3 @@
-import { Website } from '~~/shared/website/Website'
-
 export async function useContentPageData() {
   const route = useRoute()
   const slug = route.params.slug
@@ -13,6 +11,7 @@ export async function useContentPageData() {
   }
 
   const ret = await useAsyncData(`content-page-${slug}`, async () => {
+    const { Website } = await import('~~/app/server/website/Website')
     const website = Website.getInstance()
     const page = await website.getContentPageBySlug(slug)
     return page

@@ -6,10 +6,10 @@
  * Constructor is private - direct instantiation is forbidden.
  */
 
-import { NotionDatabasePage } from '~~/shared/notion/NotionDatabasePage'
-import { NotionMusubiPage } from '~~/shared/notion/NotionMusubiPage'
-import type { PostMeta } from '~~/shared/website/types/PostMeta'
-import type { Post } from '~~/shared/website/types'
+import { NotionDatabasePage } from '~~/app/server/notion/NotionDatabasePage'
+import { NotionMusubiPage } from '~~/app/server/notion/NotionMusubiPage'
+import type { PostMeta } from '~~/app/server/website/types/PostMeta'
+import type { Post } from '~~/app/server/website/types'
 
 export class Website {
   private static instance: Website | null = null

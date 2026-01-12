@@ -1,4 +1,3 @@
-import { Website } from '~~/shared/website/Website'
 import { createPostDataKey } from '~/utils/keysForUseAsyncData'
 
 export async function usePostData() {
@@ -14,6 +13,7 @@ export async function usePostData() {
   }
 
   const ret = await useAsyncData(createPostDataKey(slug), async () => {
+    const { Website } = await import('~~/app/server/website/Website')
     const website = Website.getInstance()
     const post = await website.getPostBySlug(slug)
     return post

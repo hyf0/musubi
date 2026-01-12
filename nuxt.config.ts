@@ -1,5 +1,5 @@
 import tailwindcss from '@tailwindcss/vite'
-import { resolveWebsiteConfig } from './shared/website/resolveWebsiteConfig'
+import { resolveWebsiteConfig } from './app/server/website/resolveWebsiteConfig'
 
 const websiteConfig = await resolveWebsiteConfig()
 
@@ -41,6 +41,7 @@ export default defineNuxtConfig({
     // - When not passing string key to `useAsyncData`, nuxt will auto generate a key based on file path, which may cause data collision in some cases.
     // - https://github.com/nuxt/nuxt/blob/9094bb11213012bd6161fd8127984d08a5c588a3/packages/nuxt/src/core/plugins/keyed-functions.ts
     sharedPrerenderData: true,
+    extractAsyncDataHandlers: true,
   },
   app: {
     head: {

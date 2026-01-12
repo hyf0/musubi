@@ -8,8 +8,6 @@
 import { NotionAPI } from 'notion-client'
 import { type ExtendedRecordMap } from 'notion-types'
 
-console.log('NOTION_CLINET_LOADED')
-
 // Shared Notion client instance for efficiency
 const sharedNotion = new NotionAPI()
 

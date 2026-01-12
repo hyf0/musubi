@@ -25,7 +25,6 @@ export class WebsiteConfigPage extends NotionDatabasePage {
             .split('.')
             .map((part) => part.trim())
             .filter((part) => part.length > 0)
-          console.log('Nested config parts:', parts)
           const lastPart = parts.pop()!
 
           let curObj = config

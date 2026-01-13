@@ -54,10 +54,6 @@ export default defineNuxtConfig({
               ) {
                 return
               }
-              // Suppress sourcemap warnings from `react-tweet`
-              if (warning.message?.includes("Can't resolve original location of error")) {
-                return
-              }
               defaultHandler(warning)
             },
           },

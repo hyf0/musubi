@@ -1,5 +1,6 @@
 import type { WebsiteConfig } from './types/WebsiteConfig'
 import { ConfigPage } from '../musubi-notion/ConfigPage'
+import logger from '../../utils/logger'
 
 export async function resolveWebsiteConfig(): Promise<WebsiteConfig> {
   const configPageId = process.env.NOTION_CONFIG_PAGE_ID
@@ -10,7 +11,8 @@ export async function resolveWebsiteConfig(): Promise<WebsiteConfig> {
     return localConfig
   }
 
-  // Fetch and return remote config (errors propagate)
+  logger.info(`[REMOTE_CONFIG] Using remote config from Notion page: ${configPageId}`)
+
   const configPage = new ConfigPage(configPageId)
   return (await configPage.toObject()) as WebsiteConfig
 }

@@ -6,11 +6,24 @@ const websiteConfig = await resolveWebsiteConfig()
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   modules: ['@unocss/nuxt', 'unplugin-icons/nuxt', '@nuxtjs/color-mode'],
+  imports: {
+    autoImport: false,
+  },
+  components: {
+    // Disable automatic component registration for clarity
+    dirs: [],
+  },
   devtools: { enabled: true },
   ssr: true,
   typescript: {
     strict: true,
     typeCheck: true,
+    tsConfig: {
+      vueCompilerOptions: {
+        // Ensure strict template type checking. Especially for detecting unknown components.
+        strictTemplates: true,
+      },
+    },
     sharedTsConfig: {
       include: ['../website.config.ts'],
     },

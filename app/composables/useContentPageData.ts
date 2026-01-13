@@ -1,3 +1,5 @@
+import { useRoute, useAsyncData, createError } from '#imports'
+
 export async function useContentPageData() {
   const route = useRoute()
   const slug = route.params.slug

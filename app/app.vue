@@ -1,3 +1,8 @@
+<script setup lang="ts">
+import Navbar from '~/components/Navbar.vue'
+import Footer from '~/components/Footer.vue'
+</script>
+
 <template>
   <div
     class="min-h-screen flex flex-col bg-[var(--color-canvas-default)] text-[var(--color-fg-default)] transition-colors duration-200"

@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { computed, watch, onMounted, onBeforeUnmount, useTemplateRef } from 'vue'
+import { useAsyncData } from '#imports'
+import { assertNonNull, createNotionPageKey } from '~/utils'
 import type { ExtendedRecordMap } from 'notion-types'
 import * as React from 'react'
 import * as ReactDomClient from 'react-dom/client'

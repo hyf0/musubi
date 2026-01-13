@@ -1,3 +1,4 @@
+import { useAsyncData, createError } from '#imports'
 import { WEBSITE_CONFIG_KEY } from '~/utils/keysForUseAsyncData'
 
 export async function useWebsiteConfig() {

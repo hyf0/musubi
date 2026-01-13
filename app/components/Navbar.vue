@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import { ClientOnly } from '#components'
+import { useWebsiteData } from '~/composables/useWebsiteData'
+import { useWebsiteConfig } from '~/composables/useWebsiteConfig'
+import { assertNonNull } from '~/utils'
+import ColorModeToggle from '~/components/ColorModeToggle.vue'
 import MdiGithub from '~icons/mdi/github'
 import MdiTwitter from '~icons/mdi/twitter'
 

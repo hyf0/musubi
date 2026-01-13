@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useColorMode } from '#imports'
+import NotionPage from '~/components/NotionPage.vue'
 import type { ExtendedRecordMap } from 'notion-types';
 
 const props = defineProps<{

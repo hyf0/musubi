@@ -1,4 +1,10 @@
 <script setup lang="ts">
+import { Head, Title } from '#components'
+import { useContentPageData } from '~/composables/useContentPageData'
+import { useWebsiteConfig } from '~/composables/useWebsiteConfig'
+import { assertNonNull } from '~/utils'
+import AutoNotionPage from '~/components/AutoNotionPage.vue'
+
 const pageDataRet = await useContentPageData()
 const websiteConfigRet = await useWebsiteConfig()
 const pageData = assertNonNull(pageDataRet.data.value)

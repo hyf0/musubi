@@ -1,4 +1,10 @@
 <script setup lang="ts">
+import { Head, Title } from '#components'
+import { usePostData } from '~/composables/usePostData'
+import { useWebsiteConfig } from '~/composables/useWebsiteConfig'
+import { assertNonNull } from '~/utils'
+import AutoNotionPage from '~/components/AutoNotionPage.vue'
+
 const postDataRet = await usePostData()
 const websiteConfigRet = await useWebsiteConfig()
 const postData = assertNonNull(postDataRet.data.value)

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useCycleList } from '@vueuse/core'
 import { watchEffect, computed } from 'vue'
+import { useColorMode } from '#imports'
 import MdiWeatherSunny from '~icons/mdi/weather-sunny'
 import MdiWeatherNight from '~icons/mdi/weather-night'
 import MdiSunMoonStars from '~icons/mdi/sun-moon-stars'

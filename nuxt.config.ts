@@ -23,10 +23,58 @@ export default defineNuxtConfig({
       },
     },
     ssr: {
+      // `react-tweet` imports `index.module.css`, we need to bundle it to support usintg css modules in ssr
       noExternal: ['react-tweet'],
+    },
+    build: {
+      rollupOptions: {
+        external: ['node:fs'],
+        onwarn(warning, defaultHandler) {
+          // `react-tweet` uses `use client` which causes Rollup warning, we can safely ignore it
+          if (warning.code === 'MODULE_LEVEL_DIRECTIVE' && warning.message.includes('use client')) {
+            return
+          }
+          // Suppress sourcemap warnings from `react-tweet`
+          if (warning.message?.includes("Can't resolve original location of error")) {
+            return
+          }
+          defaultHandler(warning)
+        },
+      },
+    },
+    environments: {
+      ssr: {
+        build: {
+          rollupOptions: {
+            onwarn(warning, defaultHandler) {
+              // `react-tweet` uses `use client` which causes Rollup warning, we can safely ignore it
+              if (
+                warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
+                warning.message.includes('use client')
+              ) {
+                return
+              }
+              // Suppress sourcemap warnings from `react-tweet`
+              if (warning.message?.includes("Can't resolve original location of error")) {
+                return
+              }
+              defaultHandler(warning)
+            },
+          },
+        },
+      },
     },
   },
   nitro: {
+    rollupConfig: {
+      onwarn(warning, defaultHandler) {
+        // Useless circular dependency warning from some dependencies
+        if (warning.code === 'CIRCULAR_DEPENDENCY') {
+          return
+        }
+        defaultHandler(warning)
+      },
+    },
     prerender: {
       crawlLinks: true,
       routes: ['/'],

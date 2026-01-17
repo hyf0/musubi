@@ -2,7 +2,7 @@
 import { ClientOnly } from '#components'
 import { useWebsiteData } from '~/composables/useWebsiteData'
 import { useWebsiteConfig } from '~/composables/useWebsiteConfig'
-import { assertNonNull } from '~/utils'
+import { assertNonNull } from '~/utils/assertNonNull'
 import ColorModeToggle from '~/components/ColorModeToggle.vue'
 import MdiGithub from '~icons/mdi/github'
 import MdiTwitter from '~icons/mdi/twitter'

@@ -51,7 +51,7 @@ To auto-fix issues:
 
 - **Minimize data returned from `useAsyncData`:** The data returned from `useAsyncData` is serialized and injected into each page's HTML/payload, increasing page size. Only return the data actually needed for rendering - avoid returning entire objects when only a few fields are used.
 
-- **Never statically import from `app/server/`:** Server-only code lives in `app/server/`. Static imports will bundle server code into the client. Always use dynamic imports inside `useAsyncData` handlers:
+- **Never statically import from `app/server/`:** Server-only code lives in `app/server/`. Static imports will bundle server code into the client. Use the inline `import.meta.server` pattern with `neverCallable` to completely eliminate server code from client bundles:
 
   ```typescript
   // ❌ Bad - Website (and its NotionAPI dependency) bundled into client
@@ -61,11 +61,21 @@ To auto-fix issues:
     const website = Website.getInstance()
   })
 
-  // ✅ Good - Extracted to separate chunk, not loaded for prerendered pages in browser
-  useAsyncData('key', async () => {
-    const { Website } = await import('~~/app/server/website/Website')
-    const website = Website.getInstance()
-  })
+  // ✅ Good - Server code completely tree-shaken from client bundle
+  import { neverCallable } from '~/utils/neverCallable'
+
+  useAsyncData(
+    'key',
+    import.meta.server
+      ? async () => {
+          const { Website } = await import('~~/app/server/website/Website')
+          const website = Website.getInstance()
+          // ...
+        }
+      : neverCallable,
+  )
   ```
+
+  **Why inline conditional?** The `import.meta.server` check must be inline (not wrapped in a function) for bundlers to statically analyze and tree-shake the server code path. Keep dynamic imports inside the handler since static imports may include side effects that would still be bundled.
 
 - **Move logic inside `useAsyncData` when possible:** Logic inside `useAsyncData` handlers is removed from the final client output. Move data transformations, filtering, and processing inside the handler rather than in component code to reduce bundle size.

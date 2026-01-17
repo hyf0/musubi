@@ -1,4 +1,5 @@
 import { useRoute, useAsyncData, createError } from '#imports'
+import { neverCallable } from '~/utils/neverCallable'
 
 export async function useContentPageData() {
   const route = useRoute()
@@ -12,12 +13,17 @@ export async function useContentPageData() {
     })
   }
 
-  const ret = await useAsyncData(`content-page-${slug}`, async () => {
-    const { Website } = await import('~~/app/server/website/Website')
-    const website = Website.getInstance()
-    const page = await website.getContentPageBySlug(slug)
-    return page
-  })
+  const ret = await useAsyncData(
+    `content-page-${slug}`,
+    import.meta.server
+      ? async () => {
+          const { Website } = await import('~~/app/server/website/Website')
+          const website = Website.getInstance()
+          const page = await website.getContentPageBySlug(slug)
+          return page
+        }
+      : neverCallable,
+  )
 
   if (ret.error.value) {
     throw createError({

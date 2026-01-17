@@ -2,7 +2,7 @@
 import { Head, Title } from '#components'
 import { usePostData } from '~/composables/usePostData'
 import { useWebsiteConfig } from '~/composables/useWebsiteConfig'
-import { assertNonNull } from '~/utils'
+import { assertNonNull } from '~/utils/assertNonNull'
 import AutoNotionPage from '~/components/AutoNotionPage.vue'
 
 const postDataRet = await usePostData()

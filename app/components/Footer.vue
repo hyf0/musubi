@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useWebsiteConfig } from '~/composables/useWebsiteConfig'
-import { assertNonNull } from '~/utils'
+import { assertNonNull } from '~/utils/assertNonNull'
 
 const websiteConfigRet = await useWebsiteConfig()
 const websiteConfig = assertNonNull(websiteConfigRet.data.value)

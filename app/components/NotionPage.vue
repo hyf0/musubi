@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { computed, watch, onMounted, onBeforeUnmount, useTemplateRef } from 'vue'
 import { useAsyncData } from '#imports'
-import { assertNonNull, createNotionPageKey } from '~/utils'
+import { assertNonNull } from '~/utils/assertNonNull'
+import { createNotionPageKey } from '~/utils/keysForUseAsyncData'
+import { neverCallable } from '~/utils/neverCallable'
 import type { ExtendedRecordMap } from 'notion-types'
 import * as React from 'react'
 import * as ReactDomClient from 'react-dom/client'
@@ -47,11 +49,13 @@ const notionRendererElmRef = computed(() => createNotionRendererElement(props.da
 
 const serverRenderedNotionHtmlRet = await useAsyncData(
   createNotionPageKey(props.pageId),
-  async () => {
-    const { renderToString } = await import('react-dom/server')
-    const html = renderToString(notionRendererElmRef.value)
-    return { html, darkMode: props.darkMode ?? false }
-  },
+  import.meta.server
+    ? async () => {
+        const { renderToString } = await import('react-dom/server')
+        const html = renderToString(notionRendererElmRef.value)
+        return { html, darkMode: props.darkMode ?? false }
+      }
+    : neverCallable,
 )
 
 const { html: serverRenderedNotionHtml, darkMode: serverDarkMode } = assertNonNull(serverRenderedNotionHtmlRet.data.value)

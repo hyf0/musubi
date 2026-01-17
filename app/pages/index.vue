@@ -2,7 +2,7 @@
 import { Head, Title } from '#components'
 import { useWebsiteData } from '~/composables/useWebsiteData'
 import { useWebsiteConfig } from '~/composables/useWebsiteConfig'
-import { assertNonNull } from '~/utils'
+import { assertNonNull } from '~/utils/assertNonNull'
 
 const websiteDataRet = await useWebsiteData()
 const websiteConfigRet = await useWebsiteConfig()

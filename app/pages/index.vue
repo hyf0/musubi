@@ -1,24 +1,22 @@
 <script setup lang="ts">
 import { Head, Title } from '#components'
-import { useWebsiteData } from '~/composables/useWebsiteData'
-import { useWebsiteConfig } from '~/composables/useWebsiteConfig'
+import { useHomePageData } from '~/composables/useHomePageData'
 
-const websiteData = await useWebsiteData()
-const websiteConfig = await useWebsiteConfig()
+const homePageData = await useHomePageData()
 
 function formatDate(dateString: string) {
   const date = new Date(dateString)
   return date.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
-    day: 'numeric'
+    day: 'numeric',
   })
 }
 </script>
 
 <template>
   <Head>
-    <Title>{{ websiteConfig.title }}</Title>
+    <Title>{{ homePageData.websiteTitle }}</Title>
   </Head>
   <div class="max-w-4xl mx-auto py-8">
     <div
@@ -29,36 +27,30 @@ function formatDate(dateString: string) {
       >
         <h2 class="text-sm font-semibold text-[var(--color-fg-default)]">Posts</h2>
         <span class="text-xs text-[var(--color-fg-muted)] font-mono"
-          >{{ websiteData.postMetaList.length }} posts</span
+          >{{ homePageData.posts.length }} posts</span
         >
       </div>
 
       <div
-        v-if="websiteData.postMetaList.length > 0"
+        v-if="homePageData.posts.length > 0"
         class="divide-y divide-[var(--color-border-muted)]"
       >
         <article
-          v-for="postMeta in websiteData.postMetaList"
-          :key="postMeta.slug"
+          v-for="post in homePageData.posts"
+          :key="post.slug"
           class="group hover:bg-[var(--color-canvas-subtle)] transition-colors duration-150"
         >
-          <a :href="`/blog/${postMeta.slug}`" class="block px-4 py-3 sm:px-6 no-underline">
+          <a :href="`/blog/${post.slug}`" class="block px-4 py-3 sm:px-6 no-underline">
             <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2">
               <h3
                 class="text-base font-semibold text-[var(--color-fg-default)] group-hover:text-[var(--color-accent-fg)] m-0"
               >
-                {{ postMeta.title }}
+                {{ post.title }}
               </h3>
               <time class="text-xs text-[var(--color-fg-muted)] font-mono whitespace-nowrap">
-                {{ formatDate(postMeta.date) }}
+                {{ formatDate(post.date) }}
               </time>
             </div>
-            <p
-              v-if="postMeta.description"
-              class="mt-1 text-sm text-[var(--color-fg-muted)] line-clamp-2"
-            >
-              {{ postMeta.description }}
-            </p>
           </a>
         </article>
       </div>

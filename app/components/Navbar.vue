@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { ClientOnly } from '#components'
-import { useWebsiteData } from '~/composables/useWebsiteData'
-import { useWebsiteConfig } from '~/composables/useWebsiteConfig'
+import { useNavbarData } from '~/composables/useNavbarData'
 import ColorModeToggle from '~/components/ColorModeToggle.vue'
 import MdiGithub from '~icons/mdi/github'
 import MdiTwitter from '~icons/mdi/twitter'
 
-const websiteData = await useWebsiteData()
-const websiteConfig = await useWebsiteConfig()
+const navbarData = await useNavbarData()
 </script>
 
 <template>
@@ -23,16 +21,16 @@ const websiteConfig = await useWebsiteConfig()
           Home
         </a>
         <a
-          v-for="page in websiteData.contentPages"
+          v-for="page in navbarData.contentPages"
           :key="page.slug"
           :href="`/${page.slug}`"
           class="text-sm font-semibold text-[var(--color-fg-default)] hover:text-[var(--color-fg-muted)] transition-colors"
         >
           {{ page.title }}
         </a>
-        <template v-if="websiteConfig.social?.github">
+        <template v-if="navbarData.social?.github">
           <a
-            :href="websiteConfig.social.github"
+            :href="navbarData.social.github"
             target="_blank"
             rel="noopener noreferrer"
             class="text-[var(--color-fg-muted)] hover:text-[var(--color-accent-fg)] transition-colors"
@@ -41,9 +39,9 @@ const websiteConfig = await useWebsiteConfig()
             <MdiGithub class="w-5 h-5" />
           </a>
         </template>
-        <template v-if="websiteConfig.social?.x">
+        <template v-if="navbarData.social?.x">
           <a
-            :href="websiteConfig.social.x"
+            :href="navbarData.social.x"
             target="_blank"
             rel="noopener noreferrer"
             class="text-[var(--color-fg-muted)] hover:text-[var(--color-accent-fg)] transition-colors"

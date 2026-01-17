@@ -1,18 +1,16 @@
 <script setup lang="ts">
 import { Head, Title } from '#components'
 import { useContentPageData } from '~/composables/useContentPageData'
-import { useWebsiteConfig } from '~/composables/useWebsiteConfig'
 import AutoNotionPage from '~/components/AutoNotionPage.vue'
 
-const pageData = await useContentPageData()
-const websiteConfig = await useWebsiteConfig()
+const contentPageData = await useContentPageData()
 
-const pageMeta = pageData.meta
+const pageMeta = contentPageData.page.meta
 </script>
 
 <template>
   <Head>
-    <Title>{{ pageMeta.title }} | {{ websiteConfig.title }}</Title>
+    <Title>{{ pageMeta.title }} | {{ contentPageData.websiteTitle }}</Title>
   </Head>
   <article class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
     <header class="mb-8 pb-4 border-b border-[var(--color-border-muted)]">
@@ -21,6 +19,9 @@ const pageMeta = pageData.meta
       </h1>
     </header>
 
-    <AutoNotionPage :record-map="pageData.recordMap" :page-id="pageData.meta.pageId" />
+    <AutoNotionPage
+      :record-map="contentPageData.page.recordMap"
+      :page-id="contentPageData.page.meta.pageId"
+    />
   </article>
 </template>

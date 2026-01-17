@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { Head, Title } from '#components'
-import { usePostData } from '~/composables/usePostData'
-import { useWebsiteConfig } from '~/composables/useWebsiteConfig'
+import { usePostPageData } from '~/composables/usePostPageData'
 import AutoNotionPage from '~/components/AutoNotionPage.vue'
 
-const postData = await usePostData()
-const websiteConfig = await useWebsiteConfig()
+const postPageData = await usePostPageData()
 
-const postMeta = postData.meta
+const postMeta = postPageData.post.meta
 
 const date = new Date(postMeta.date).toLocaleDateString('en-US', {
   year: 'numeric',
@@ -18,7 +16,7 @@ const date = new Date(postMeta.date).toLocaleDateString('en-US', {
 
 <template>
   <Head>
-    <Title>{{ postMeta.title }} | {{ websiteConfig.title }}</Title>
+    <Title>{{ postMeta.title }} | {{ postPageData.websiteTitle }}</Title>
   </Head>
   <article class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
     <header class="mb-8 pb-4 border-b border-[var(--color-border-muted)]">
@@ -35,6 +33,9 @@ const date = new Date(postMeta.date).toLocaleDateString('en-US', {
       </div>
     </header>
 
-    <AutoNotionPage :record-map="postData.recordMap" :page-id="postData.meta.pageId" />
+    <AutoNotionPage
+      :record-map="postPageData.post.recordMap"
+      :page-id="postPageData.post.meta.pageId"
+    />
   </article>
 </template>

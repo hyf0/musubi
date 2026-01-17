@@ -1,9 +1,9 @@
 import { useRoute, createError } from '#imports'
-import { createPostDataKey } from '~/utils/keysForUseAsyncData'
 import { neverCallable } from '~/utils/neverCallable'
+import { createPostPageDataKey } from '~/utils/keysForUseAsyncData'
 import { useBuildAsyncData } from '~/composables/useBuildAsyncData'
 
-export async function usePostData() {
+export async function usePostPageData() {
   const route = useRoute()
   const slug = route.params.slug
 
@@ -16,13 +16,22 @@ export async function usePostData() {
   }
 
   return await useBuildAsyncData(
-    createPostDataKey(slug),
+    createPostPageDataKey(slug),
     import.meta.server
       ? async () => {
           const { Website } = await import('~~/app/server/website/Website')
+          const { resolveWebsiteConfig } = await import(
+            '~~/app/server/website/resolveWebsiteConfig'
+          )
           const website = Website.getInstance()
-          const post = await website.getPostBySlug(slug)
-          return post
+          const [post, config] = await Promise.all([
+            website.getPostBySlug(slug),
+            resolveWebsiteConfig(),
+          ])
+          return {
+            websiteTitle: config.title,
+            post,
+          }
         }
       : neverCallable,
   )

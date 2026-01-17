@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useWebsiteConfig } from '~/composables/useWebsiteConfig'
+import { useFooterData } from '~/composables/useFooterData'
 
-const websiteConfig = await useWebsiteConfig()
+const footerData = await useFooterData()
 </script>
 
 <template>
@@ -13,7 +13,7 @@ const websiteConfig = await useWebsiteConfig()
         class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-[var(--color-fg-muted)]"
       >
         <div class="flex items-center gap-4">
-          <span>&copy; {{ new Date().getFullYear() }} {{ websiteConfig.author }}</span>
+          <span>&copy; {{ new Date().getFullYear() }} {{ footerData.author }}</span>
         </div>
         <div class="flex items-center gap-4">
           <p class="flex items-center gap-1">

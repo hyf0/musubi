@@ -47,7 +47,23 @@ To auto-fix issues:
 
 - **Vue SFC block order - `<script>` first pattern:** Always organize Vue Single File Components with the following block order: `<script setup lang="ts">` → `<template>` → `<style>` (if present). This improves readability by presenting the component's logic and data flow before its presentation layer. Template-only components (without script blocks) should remain as-is.
 
-- **Always provide explicit keys to `useAsyncData`:** With `sharedPrerenderData: true` in `nuxt.config.ts`, Nuxt shares async data across prerendered pages. Without an explicit key, `useAsyncData` generates a key based on file path, causing data collision when the same composable is called for different pages. Always pass a unique key (e.g., `useAsyncData(createPostDataKey(slug), async () => {...})`). See `app/utils/keysForUseAsyncData.ts` for key utilities.
+- **Centralize all `useAsyncData` keys in `keysForUseAsyncData.ts`:** With `sharedPrerenderData: true` in `nuxt.config.ts`, Nuxt shares async data across prerendered pages. Without an explicit key, `useAsyncData` generates a key based on file path, causing data collision when the same composable is called for different pages.
+
+  **Rules:**
+  - All keys MUST be defined in `app/utils/keysForUseAsyncData.ts`
+  - Never define keys inline in composables
+  - Use constants for static keys (e.g., `NAVBAR_DATA_KEY`)
+  - Use factory functions for dynamic keys (e.g., `createPostPageDataKey(slug)`)
+
+  ```typescript
+  // ❌ Bad - key defined inline
+  const KEY = 'my-data'
+  useBuildAsyncData(KEY, ...)
+
+  // ✅ Good - key imported from centralized file
+  import { MY_DATA_KEY } from '~/utils/keysForUseAsyncData'
+  useBuildAsyncData(MY_DATA_KEY, ...)
+  ```
 
 - **Minimize data returned from `useAsyncData`:** The data returned from `useAsyncData` is serialized and injected into each page's HTML/payload, increasing page size. Only return the data actually needed for rendering - avoid returning entire objects when only a few fields are used.
 
@@ -117,3 +133,30 @@ To auto-fix issues:
   ```
 
 - **Move logic inside `useBuildAsyncData` when possible:** Logic inside `useBuildAsyncData` handlers is removed from the final client output. Move data transformations, filtering, and processing inside the handler rather than in component code to reduce bundle size.
+
+- **Per-page data composables:** Each page/component should have its own dedicated composable that returns exactly what it needs - no more, no less. Avoid creating shared composables that return fields not used by all consumers.
+
+  ```typescript
+  // ❌ Bad - shared composable returns unused fields
+  // useWebsiteData returns {postMetaList, contentPages} but most consumers only need one
+  const data = await useWebsiteData()
+  // Home page only uses postMetaList, but contentPages is also in payload
+
+  // ✅ Good - dedicated composables return only what's needed
+  // useHomePageData returns {websiteTitle, posts: [{title, slug, date}]}
+  const homeData = await useHomePageData()
+  // Only fields actually used are in payload
+
+  // useNavbarData returns {contentPages: [{title, slug}], social}
+  const navData = await useNavbarData()
+  // Navbar only gets what it renders
+  ```
+
+  **Naming convention:**
+  - Layout composables: `useNavbarData`, `useFooterData`
+  - Page composables: `useHomePageData`, `usePostPageData`, `useContentPageData`
+
+  **Benefits:**
+  - Smaller payload per page (only needed fields serialized)
+  - Clearer data flow (each consumer's needs are explicit)
+  - Better tree-shaking of unused data transformations

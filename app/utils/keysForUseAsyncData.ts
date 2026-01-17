@@ -1,7 +1,11 @@
-export const createPostDataKey = (slug: string) => `post-data-${slug}`
+// Layout keys
+export const NAVBAR_DATA_KEY = 'navbar-data'
+export const FOOTER_DATA_KEY = 'footer-data'
 
-export const WEBSITE_DATA_KEY = 'website-data'
+// Page keys
+export const HOME_PAGE_DATA_KEY = 'home-page-data'
+export const createPostPageDataKey = (slug: string) => `post-page-${slug}`
+export const createContentPageDataKey = (slug: string) => `content-page-${slug}`
 
-export const WEBSITE_CONFIG_KEY = 'website-config'
-
+// Notion page key
 export const createNotionPageKey = (pageId: string) => `notion-page-${pageId}`

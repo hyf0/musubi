@@ -2,15 +2,12 @@
 import { ClientOnly } from '#components'
 import { useWebsiteData } from '~/composables/useWebsiteData'
 import { useWebsiteConfig } from '~/composables/useWebsiteConfig'
-import { assertNonNull } from '~/utils/assertNonNull'
 import ColorModeToggle from '~/components/ColorModeToggle.vue'
 import MdiGithub from '~icons/mdi/github'
 import MdiTwitter from '~icons/mdi/twitter'
 
-const websiteDataRet = await useWebsiteData()
-const websiteData = assertNonNull(websiteDataRet.data.value)
-const websiteConfigRet = await useWebsiteConfig()
-const websiteConfig = assertNonNull(websiteConfigRet.data.value)
+const websiteData = await useWebsiteData()
+const websiteConfig = await useWebsiteConfig()
 </script>
 
 <template>

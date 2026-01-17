@@ -51,10 +51,12 @@ To auto-fix issues:
 
 - **Minimize data returned from `useAsyncData`:** The data returned from `useAsyncData` is serialized and injected into each page's HTML/payload, increasing page size. Only return the data actually needed for rendering - avoid returning entire objects when only a few fields are used.
 
-- **Never statically import from `app/server/`:** Server-only code lives in `app/server/`. Static imports will bundle server code into the client. Use the inline `import.meta.server` pattern with `neverCallable` to completely eliminate server code from client bundles:
+- **Eliminating server-only code from client bundles:** Server-only code lives in `app/server/`. This project uses a pattern to completely tree-shake server code from client bundles (not just move it to a separate chunk).
+
+  **Pattern:** Use `import.meta.server` conditional with `neverCallable` placeholder:
 
   ```typescript
-  // ❌ Bad - Website (and its NotionAPI dependency) bundled into client
+  // ❌ Bad - Server code bundled into client
   import { Website } from '~~/app/server/website/Website'
 
   useAsyncData('key', async () => {
@@ -64,18 +66,54 @@ To auto-fix issues:
   // ✅ Good - Server code completely tree-shaken from client bundle
   import { neverCallable } from '~/utils/neverCallable'
 
-  useAsyncData(
+  useBuildAsyncData(
     'key',
     import.meta.server
       ? async () => {
           const { Website } = await import('~~/app/server/website/Website')
           const website = Website.getInstance()
-          // ...
+          return data
         }
       : neverCallable,
   )
   ```
 
-  **Why inline conditional?** The `import.meta.server` check must be inline (not wrapped in a function) for bundlers to statically analyze and tree-shake the server code path. Keep dynamic imports inside the handler since static imports may include side effects that would still be bundled.
+  **Key points:**
+  - `import.meta.server` (or `import.meta.env.SSR`) is replaced at build time, enabling tree-shaking
+  - The conditional must be **inline** - wrapping in a function defeats tree-shaking
+  - `neverCallable` provides type-safe placeholder that throws if ever called on client
+  - **CRITICAL: Use dynamic `import()` inside the handler** - static imports at file top will still bundle server code even with the conditional:
 
-- **Move logic inside `useAsyncData` when possible:** Logic inside `useAsyncData` handlers is removed from the final client output. Move data transformations, filtering, and processing inside the handler rather than in component code to reduce bundle size.
+    ```typescript
+    // ❌ Bad - static import still bundles Website into client
+    import { Website } from '~~/app/server/website/Website'
+
+    useBuildAsyncData('key', import.meta.server
+      ? async () => { Website.getInstance() }  // Website already bundled!
+      : neverCallable)
+
+    // ✅ Good - dynamic import inside handler, completely eliminated
+    useBuildAsyncData('key', import.meta.server
+      ? async () => {
+          const { Website } = await import('~~/app/server/website/Website')
+          Website.getInstance()
+        }
+      : neverCallable)
+    ```
+
+  **`useBuildAsyncData` helper:** Use this instead of raw `useAsyncData` for cleaner code:
+  - Returns data directly (not wrapped in AsyncData object)
+  - Throws descriptive errors if data fetch fails or returns null
+  - See `app/composables/useBuildAsyncData.ts`
+
+  ```typescript
+  // With useBuildAsyncData - data is returned directly
+  const data = await useBuildAsyncData('key', import.meta.server ? handler : neverCallable)
+
+  // vs raw useAsyncData - requires unwrapping and null checks
+  const ret = await useAsyncData('key', handler)
+  if (ret.error.value) throw error
+  const data = assertNonNull(ret.data.value)
+  ```
+
+- **Move logic inside `useBuildAsyncData` when possible:** Logic inside `useBuildAsyncData` handlers is removed from the final client output. Move data transformations, filtering, and processing inside the handler rather than in component code to reduce bundle size.

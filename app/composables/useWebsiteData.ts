@@ -1,9 +1,9 @@
-import { useAsyncData, createError } from '#imports'
 import { WEBSITE_DATA_KEY } from '~/utils/keysForUseAsyncData'
 import { neverCallable } from '~/utils/neverCallable'
+import { useBuildAsyncData } from '~/composables/useBuildAsyncData'
 
 export async function useWebsiteData() {
-  const ret = await useAsyncData(
+  return await useBuildAsyncData(
     WEBSITE_DATA_KEY,
     import.meta.server
       ? async () => {
@@ -20,14 +20,4 @@ export async function useWebsiteData() {
         }
       : neverCallable,
   )
-
-  if (ret.error.value) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: ret.error.value.message,
-      fatal: true,
-    })
-  }
-
-  return ret
 }

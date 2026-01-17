@@ -1,6 +1,7 @@
-import { useRoute, useAsyncData, createError } from '#imports'
+import { useRoute, createError } from '#imports'
 import { createPostDataKey } from '~/utils/keysForUseAsyncData'
 import { neverCallable } from '~/utils/neverCallable'
+import { useBuildAsyncData } from '~/composables/useBuildAsyncData'
 
 export async function usePostData() {
   const route = useRoute()
@@ -14,7 +15,7 @@ export async function usePostData() {
     })
   }
 
-  const ret = await useAsyncData(
+  return await useBuildAsyncData(
     createPostDataKey(slug),
     import.meta.server
       ? async () => {
@@ -25,14 +26,4 @@ export async function usePostData() {
         }
       : neverCallable,
   )
-
-  if (ret.error.value) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: ret.error.value.message,
-      fatal: true,
-    })
-  }
-
-  return ret
 }

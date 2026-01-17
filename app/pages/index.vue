@@ -2,12 +2,9 @@
 import { Head, Title } from '#components'
 import { useWebsiteData } from '~/composables/useWebsiteData'
 import { useWebsiteConfig } from '~/composables/useWebsiteConfig'
-import { assertNonNull } from '~/utils/assertNonNull'
 
-const websiteDataRet = await useWebsiteData()
-const websiteConfigRet = await useWebsiteConfig()
-const websiteData = assertNonNull(websiteDataRet.data.value)
-const websiteConfig = assertNonNull(websiteConfigRet.data.value)
+const websiteData = await useWebsiteData()
+const websiteConfig = await useWebsiteConfig()
 
 function formatDate(dateString: string) {
   const date = new Date(dateString)

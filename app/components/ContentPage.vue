@@ -2,13 +2,10 @@
 import { Head, Title } from '#components'
 import { useContentPageData } from '~/composables/useContentPageData'
 import { useWebsiteConfig } from '~/composables/useWebsiteConfig'
-import { assertNonNull } from '~/utils/assertNonNull'
 import AutoNotionPage from '~/components/AutoNotionPage.vue'
 
-const pageDataRet = await useContentPageData()
-const websiteConfigRet = await useWebsiteConfig()
-const pageData = assertNonNull(pageDataRet.data.value)
-const websiteConfig = assertNonNull(websiteConfigRet.data.value)
+const pageData = await useContentPageData()
+const websiteConfig = await useWebsiteConfig()
 
 const pageMeta = pageData.meta
 </script>

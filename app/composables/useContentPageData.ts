@@ -1,5 +1,6 @@
-import { useRoute, useAsyncData, createError } from '#imports'
+import { useRoute, createError } from '#imports'
 import { neverCallable } from '~/utils/neverCallable'
+import { useBuildAsyncData } from '~/composables/useBuildAsyncData'
 
 export async function useContentPageData() {
   const route = useRoute()
@@ -13,7 +14,7 @@ export async function useContentPageData() {
     })
   }
 
-  const ret = await useAsyncData(
+  return await useBuildAsyncData(
     `content-page-${slug}`,
     import.meta.server
       ? async () => {
@@ -24,14 +25,4 @@ export async function useContentPageData() {
         }
       : neverCallable,
   )
-
-  if (ret.error.value) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: ret.error.value.message,
-      fatal: true,
-    })
-  }
-
-  return ret
 }

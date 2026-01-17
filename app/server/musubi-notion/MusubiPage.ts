@@ -16,6 +16,25 @@ export class MusubiPage extends NotionStandalonePage {
     super(pageId)
   }
 
+  /**
+   * Get the page status independently (for draft detection before full data fetch)
+   * Defaults to 'Draft' if status is missing or invalid
+   */
+  async getStatus(): Promise<'Published' | 'Draft'> {
+    const status = await this.getProp('Status')
+    if (status === 'Published') return 'Published'
+    return 'Draft'
+  }
+
+  /**
+   * Get the page title if available (for logging purposes)
+   * Returns undefined if title is missing or not a string
+   */
+  async getTitle(): Promise<string | undefined> {
+    const title = await this.getProp('Title')
+    return typeof title === 'string' ? title : undefined
+  }
+
   async toMusubiPageData(): Promise<MusubiPageData> {
     const [title, slug, date, status, type, tags] = await Promise.all([
       this.getPropAsString('Title'),

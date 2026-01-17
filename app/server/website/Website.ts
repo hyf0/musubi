@@ -7,9 +7,10 @@
  */
 
 import { NotionDatabasePage } from '~~/app/server/notion/NotionDatabasePage'
-import { MusubiPage } from '~/server/musubi-notion/MusubiPage'
+import { MusubiPage, type MusubiPageData } from '~/server/musubi-notion/MusubiPage'
 import type { PostMeta } from '~~/app/server/website/types/PostMeta'
 import type { Post } from '~~/app/server/website/types'
+import logger from '~/utils/logger'
 
 export class Website {
   private static instance: Website | null = null
@@ -51,7 +52,20 @@ export class Website {
     const map = new Map<string, MusubiPage>()
     const pages = await this.#fetchAllMusubiPagesCached()
     for (const page of pages) {
-      const data = await page.toMusubiPageData()
+      let data: MusubiPageData
+      try {
+        data = await page.toMusubiPageData()
+      } catch (error) {
+        const status = await page.getStatus()
+        if (status === 'Draft') {
+          const title = await page.getTitle()
+          logger.info(
+            `[Website] Skipping draft with missing data: title="${title ?? 'unknown'}", pageId="${page.getPageId()}"`,
+          )
+          continue
+        }
+        throw error
+      }
       if (data.type === 'Post') {
         map.set(data.slug, page)
       }
@@ -64,7 +78,20 @@ export class Website {
     const map = new Map<string, MusubiPage>()
     const pages = await this.#fetchAllMusubiPagesCached()
     for (const page of pages) {
-      const data = await page.toMusubiPageData()
+      let data: MusubiPageData
+      try {
+        data = await page.toMusubiPageData()
+      } catch (error) {
+        const status = await page.getStatus()
+        if (status === 'Draft') {
+          const title = await page.getTitle()
+          logger.info(
+            `[Website] Skipping draft with missing data: title="${title ?? 'unknown'}", pageId="${page.getPageId()}"`,
+          )
+          continue
+        }
+        throw error
+      }
       if (data.type === 'Content') {
         map.set(data.slug, page)
       }
@@ -99,7 +126,20 @@ export class Website {
     const posts: PostMeta[] = []
 
     for (const page of pages) {
-      const data = await page.toMusubiPageData()
+      let data: MusubiPageData
+      try {
+        data = await page.toMusubiPageData()
+      } catch (error) {
+        const status = await page.getStatus()
+        if (status === 'Draft') {
+          const title = await page.getTitle()
+          logger.info(
+            `[Website] Skipping draft with missing data: title="${title ?? 'unknown'}", pageId="${page.getPageId()}"`,
+          )
+          continue
+        }
+        throw error
+      }
 
       // Skip non-posts and drafts
       if (data.type !== 'Post' || data.status === 'Draft') {
@@ -165,7 +205,20 @@ export class Website {
     const contentPages: PostMeta[] = []
 
     for (const page of pages) {
-      const data = await page.toMusubiPageData()
+      let data: MusubiPageData
+      try {
+        data = await page.toMusubiPageData()
+      } catch (error) {
+        const status = await page.getStatus()
+        if (status === 'Draft') {
+          const title = await page.getTitle()
+          logger.info(
+            `[Website] Skipping draft with missing data: title="${title ?? 'unknown'}", pageId="${page.getPageId()}"`,
+          )
+          continue
+        }
+        throw error
+      }
 
       // Skip non-content pages and drafts
       if (data.type !== 'Content' || data.status === 'Draft') {

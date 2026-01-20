@@ -11,6 +11,7 @@ import { NotionRenderer } from 'react-notion-x'
 import { Code } from 'react-notion-x/build/third-party/code'
 import { Tweet as ReactTweet } from 'react-tweet'
 import 'prismjs/components/prism-rust.js'
+import 'prismjs/components/prism-markdown.js'
 
 const props = defineProps<{
   recordMap: ExtendedRecordMap

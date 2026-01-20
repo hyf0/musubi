@@ -2,6 +2,12 @@
   <i>Tie your thoughts, publish them quietly.</i>
 </p>
 
+---
+
+WIP: Still under heavy development, not ready for use yet.
+
+---
+
 # Musubi / 結縄
 
 A peronsal website/blog framework using Notion as a CMS, powered by Nuxt.

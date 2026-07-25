@@ -54,3 +54,10 @@ Traps already paid for in this repository. Each entry states what not to do, why
 - Without preprocess blank lines, CommonMark merges adjacent paragraphs (soft break), turns `paragraph\n---` into a setext H2 (divider disappears), absorbs following prose into the previous list item, and lazy-continues a following paragraph into a blockquote.
 - **Ruling:** `preprocessNotionMarkdown` runs `separateNotionBlockBoundaries` after empty-block and void-tag rewrites. It inserts a blank line between non-empty lines except inside fenced code, tight lists (including nested items and indented continuations), multi-line blockquotes, and table row sequences.
 - **Residual:** Two adjacent _separate_ Notion quote blocks still look like one multi-line quote in the export (`>\n>`), so they remain one quote after preprocess. Fixing that needs block-structure data the Page-as-Markdown string does not provide.
+
+## The deployed HTML must declare its own encoding
+
+- **Do not** assume the host sends `charset`. Cloudflare Workers Static Assets returns `Content-Type: text/html` with no charset parameter, so the browser guesses the encoding; a Chinese-locale browser guesses GBK and every UTF-8 page renders as mojibake.
+- Local development and `site:serve` both send `charset=utf-8`, so the failure appears only on the deployed site. Void's client-side navigation then loads page JSON, which is always decoded as UTF-8, so clicking any link visibly "repairs" the page and hides the cause.
+- The Nuxt implementation emitted the declaration through its own head defaults. The Void migration reproduced every other head tag but not this one, and it shipped to production.
+- **Ruling:** Keep `{ charset: 'utf-8' }` as the first `meta` entry of `headDefaults` in `src/middleware/01.site.ts`, and verify it against built HTML rather than the development server. The declaration must stay within the document's first 1024 bytes.

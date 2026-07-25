@@ -67,5 +67,5 @@ Docs are local at `node_modules/vite-plus/docs` or online at https://viteplus.de
 
 ## Musubi session rules (outside PCR markers)
 
-- Ignore Nuxt dev warnings `NUXT_B5004` (external `vite.config.ts`) and `NUXT_B2005` (`check-if-page-unused` default export). Do not delete `vite.config.ts`, move Vite+ task/fmt/lint config into `nuxt.config`, or patch Nuxt to silence them. Full context: [`.agents/docs/gotchas.md`](./.agents/docs/gotchas.md#nuxt-dev-warnings-with-vite-nuxt_b5004-nuxt_b2005).
-
+- Keep direct `pathe@2.0.3` while Musubi uses Void `0.10.10`, and keep the post-build route plus page-data completeness gate. Full context: [`.agents/docs/gotchas.md`](./.agents/docs/gotchas.md).
+- Use `vp run typecheck` for the complete type gate: `vp check` intentionally does not replace the separate Void/Vue and framework-independent tooling checks. Full context: [`.agents/docs/gotchas.md`](./.agents/docs/gotchas.md).

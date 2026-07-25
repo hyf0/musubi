@@ -1,15 +1,12 @@
-# Nuxt dev/build outputs
-.output
-.data
-.nuxt
-.nitro
-.cache
+# Void dev/build outputs
+.void
+dist
+
 .musubi/*
 !.musubi/notion-data-snapshot/
 !.musubi/notion-data-snapshot/config.json
 !.musubi/notion-data-snapshot/pages/
 !.musubi/notion-data-snapshot/pages/*.json
-dist
 
 # Node dependencies
 node_modules
@@ -29,8 +26,8 @@ logs
 !.env.example
 
 # Deployment
-.vercel
 .wrangler
+/wrangler.json
 .dev.vars*
 !.dev.vars.example
 

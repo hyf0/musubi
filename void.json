@@ -1,0 +1,6 @@
+{
+  "$schema": "./node_modules/void/schema.json",
+  "sourceDir": "src",
+  "target": "node",
+  "output": "static"
+}

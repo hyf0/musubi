@@ -1,84 +1,30 @@
-<p align="center"><i>Tie your thoughts, publish them quietly.</i></p>
+# Musubi / 結び
 
-# Musubi / 結縄
+Musubi is a personal website framework. It reads your Notion workspace at build time and publishes a static site to Cloudflare Workers.
 
-Musubi is Yunfei's opinionated personal website framework. Notion is the editing surface; a dedicated setup step records its data as local JSON, then Nuxt and Vue validate and typeset that snapshot into a static site.
+- **Fork, then deploy.** Fork the repository and connect it to Cloudflare Workers.
+- **Write and configure the site in Notion.** No need to clone the repository, no local config file.
+- **Reads Notion through the official API.** Read-only, and only the pages you share with it.
+- **Built on [Void Framework](https://void.cloud/guide/pages-routing/overview) and Vue 3.**
+- **Reading-first design derived from [Kami](https://github.com/tw93/Kami).**
 
-## Use a fork
+## How it works
 
-You do not need to change source code or create a local website configuration file for the default site. An ordinary `.env.local` stores only the build secret and the two Notion source locators; optional private build inputs such as an alternate font-cache directory may also be set there.
+![Void Framework reads the content from Notion and deploys the built site to Cloudflare Workers.](./assets/how-it-works.svg)
 
-1. Fork this repository.
-2. Create or duplicate a Notion workspace that follows the [Database and Config contract](./docs/notion-workspace.md).
-3. Create a dedicated Notion internal integration with only `Read content`, then share the workspace root with it.
-4. Copy `.env.example` to `.env.local` and fill the token plus both Notion page IDs.
-5. Install, fetch the first Notion Data snapshot, and verify the site through Vite+:
+## Local development
+
+Install [Vite+](https://viteplus.dev/guide/), then:
 
 ```sh
 vp install
-vp run notion:setup
-vp run ready
+vpr dev
 ```
 
-`vp run notion:setup` is the only content command that contacts Notion. It writes the tracked snapshot as `.musubi/notion-data-snapshot/config.json` plus one `.musubi/notion-data-snapshot/pages/<notion-page-id>.json` file per Published page. Unchanged pages are reused on later refreshes. `pnpm run dev`, `vp run site:build`, and `vp run ready` consume those files locally and do not contact Notion. `pnpm run build` is `notion:setup` then `site:build`: refresh content first, then the offline static site pipeline.
+The dev server runs at `http://localhost:5173` and reads a checked-in Notion snapshot, so it needs no Notion token. `vpr ready` runs the full check and build.
 
-`package.json` keeps only lifecycle hooks and entry scripts (`dev`, `build`, `preview`). Composable steps live as Vite+ tasks under `vp run` (`site:build`, `notion:setup`, `font:setup`, `font:build`, `ready`, and the rest).
+## License
 
-The deployable artifact is `.output/public`. It does not need `.output/server`, a running Nitro process, Notion credentials, or a public content API.
+Musubi's source code is available under the [MIT License](./LICENSE). Fonts and the font files a build generates are not.
 
-Production deployment, publication, cache, and rollback procedures are documented in [Production Operations](./docs/production.md).
-
-## Optional Tsanger typography
-
-Musubi works without proprietary font files: the open-licensed `Musubi CJK Fallback` is always available. Preferred Tsanger JinKai W04/W05 sources are never committed: `font:setup` downloads and verifies them into the ignored `.musubi/font/tsanger/` cache (skips download when a verified cache already exists). Default download order is jsDelivr (`cdn.jsdelivr.net/gh/tw93/Kami@main/assets/fonts/…`), then the official `tsanger.cn` hosts; checksums must match the pinned pair.
-
-The default pipeline runs `vp run font:setup` so install, dev, and site builds download a missing verified Tsanger cache (or reuse an existing one). Failure prints a clear error and stops the pipeline. `MUSUBI_TSANGER_SETUP=0` skips the download attempt only; an existing cache or paired `MUSUBI_TSANGER_*_PATH` files still feed `font:build`. To force Fallback-only, clear the cache (`vp run font:setup -- --clear`) and keep setup skipped or leave no local sources.
-
-- `postinstall` — `font:setup` after `nuxt prepare`
-- `pnpm run dev` / `vp run site:build` — `font:setup` before `font:build`
-- `pnpm run build` — `notion:setup` then `site:build`
-
-`font:build` only reads the on-disk Notion snapshot plus any Tsanger cache or path overrides; it does not call Notion itself. Review the official terms before using Tsanger. Full source files must never become public deployment artifacts.
-
-Builder-only environment (do not commit secrets or private mirror URLs):
-
-- `MUSUBI_TSANGER_W04_URL` / `MUSUBI_TSANGER_W05_URL` — paired HTTPS mirrors; files must match the pinned size and SHA-256
-- `MUSUBI_TSANGER_W04_PATH` / `MUSUBI_TSANGER_W05_PATH` — paired local source files for `font:build`
-- `MUSUBI_TSANGER_CACHE_DIR` — alternate setup cache directory
-- `MUSUBI_TSANGER_SETUP=0` — skip setup download (does not clear an existing cache)
-
-Manual: `vp run font:setup`, `vp run font:setup -- --clear`.
-
-## Local visual loop
-
-Start Nuxt against the tracked local Notion Data snapshot:
-
-```sh
-pnpm run dev
-```
-
-Development reads only the tracked Notion Data snapshot. It also prepares the generated font files from local inputs; a private `.musubi/font/build-state.json` fingerprint makes unchanged starts reuse the existing output instead of rebuilding fonts.
-
-Build from the same local snapshot and serve only the static artifact:
-
-```sh
-vp run site:build
-pnpm run preview -- --port 4173
-```
-
-The static preview mirrors the production cache contract: HTML and stable metadata URLs revalidate with `ETag` and `Last-Modified`, while content-addressed Nuxt assets, generated files, and font subsets use a one-year immutable policy. A deployment host should preserve the same distinction.
-
-`vp run lint` runs Vite+'s code lint and Google's official `designmd lint .agents/docs/DESIGN.md` together. `vp run ready` includes that repository lint task alongside formatting, focused unit tests, Nuxt's Vue-aware type check, local snapshot validation, static generation, and artifact checks. User-facing changes additionally require the real-browser workflow in [Visual Frontend Development and Acceptance](./.agents/docs/visual-frontend-development-and-acceptance.md).
-
-## Content behavior
-
-- Published Posts become `/blog/:slug`; Published Pages become `/:slug`.
-- A Published Page enters primary navigation only when its Notion row explicitly enables `Show in Navigation`; a hidden Page remains directly routable.
-- `/` shows the five newest Posts; `/blog` shows every published Post in one archive grouped by year.
-- Drafts, tag routes, paginated Blog routes, and a public content API are not generated.
-- Notion Markdown is parsed into Musubi's allowlisted AST and rendered by Vue templates. Raw HTML and executable MDX are rejected.
-- Notion images and file blocks retain their remote HTTPS URLs; Musubi does not download or rewrite them in the initial architecture. An X embed stores only its source URL and renders as a safe ordinary link without build-time oEmbed requests or browser widget loading.
-- Tsanger JinKai W04 and W05 are accepted as optional local build inputs and are subset by body-versus-emphasis usage when supplied. Preferred subsets and the public LXGW WenKai GB Medium fallback use content-addressed WOFF2 URLs; the fallback preserves every mapped source code point across Unicode-range shards that also cover later runtime text.
-- Light and warm dark themes follow the system by default; a persisted three-choice control selects Light, Dark, or System directly.
-
-The durable product boundary is documented in [Project Context Records](./.agents/docs/README.md), and the exact visual direction lives in [DESIGN.md](./.agents/docs/DESIGN.md).
+[Tsanger JinKai 02](https://tsanger.cn/), the default Chinese typeface, is licensed for personal use only. Do not build a commercial site with Musubi as it ships. See [Font sources and licenses](./licenses/fonts/README.md).

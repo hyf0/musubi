@@ -1,9 +1,23 @@
-import { defineConfig } from 'vite-plus'
+import { fileURLToPath } from 'node:url'
+
+import { voidVue } from '@void/vue/plugin'
+import UnoCSS from 'unocss/vite'
+import { defineConfig, type UserConfig } from 'vite-plus'
+import { voidPlugin } from 'void'
 
 const fontSetup = 'node --env-file-if-exists=.env.local scripts/font/index.ts'
 const notionSetup = 'node --env-file-if-exists=.env.local scripts/notion/index.ts'
 
-export default defineConfig({
+const config = {
+  // Vite+ exposes its fork's Plugin type, while Void and UnoCSS publish against Vite's public
+  // Plugin type. Keep that package-type mismatch at this boundary; dev and build verify runtime
+  // compatibility, while `satisfies UserConfig` still checks every other configuration field.
+  plugins: [...voidPlugin(), ...voidVue(), ...UnoCSS()] as UserConfig['plugins'],
+  resolve: {
+    alias: {
+      '#shared': fileURLToPath(new URL('./src/shared', import.meta.url)),
+    },
+  },
   fmt: {
     tabWidth: 2,
     useTabs: false,
@@ -14,6 +28,7 @@ export default defineConfig({
     ignorePatterns: [
       '.snapshot',
       '.musubi/notion-data-snapshot',
+      'scripts/font/fallback-hot-shards.json',
       'scripts/font/prebuilt-fallback/fonts-manifest.json',
       'AGENTS.md',
       'CLAUDE.md',
@@ -35,7 +50,7 @@ export default defineConfig({
     },
     options: {
       typeAware: true,
-      // Keep Vue-aware type checking behind the dedicated Nuxt task.
+      // Keep Vue-aware type checking behind the dedicated Void task.
       typeCheck: false,
     },
   },
@@ -54,7 +69,7 @@ export default defineConfig({
         cache: false,
       },
       typecheck: {
-        command: 'vp run nuxt:typecheck',
+        command: ['vp run void:typecheck', 'vp run tooling:typecheck'],
         cache: false,
       },
       test: {
@@ -62,18 +77,15 @@ export default defineConfig({
         cache: false,
       },
       'brand:verify': {
-        command: 'node scripts/verify-brand-color.ts',
+        command: 'node scripts/brand/verify.ts',
         cache: false,
       },
       'brand:check': {
-        command: [
-          'node scripts/verify-brand-color.ts --quick',
-          'node scripts/update-brand-color.ts --check',
-        ],
+        command: ['node scripts/brand/verify.ts --quick', 'node scripts/brand/update.ts --check'],
         cache: false,
       },
       'brand:update': {
-        command: ['vp run brand:verify', 'node scripts/update-brand-color.ts --write'],
+        command: ['vp run brand:verify', 'node scripts/brand/update.ts --write'],
         cache: false,
       },
       'notion:setup': {
@@ -88,28 +100,32 @@ export default defineConfig({
         command: 'node scripts/font/build.ts',
         cache: false,
       },
-      'nuxt:dev': {
-        command: 'nuxt dev',
+      'void:dev': {
+        command: 'vp dev',
         cache: false,
       },
-      'nuxt:typecheck': {
-        command: 'nuxt typecheck',
+      'void:typecheck': {
+        command: ['void prepare', 'vue-tsc --noEmit'],
         cache: false,
       },
-      'nuxt:generate': {
-        command: 'nuxt generate --preset static',
+      'tooling:typecheck': {
+        command: 'tsc --noEmit -p tsconfig.tooling.json',
         cache: false,
       },
-      'static:finalize': {
-        command: 'node scripts/finalize-static-artifact.mjs',
+      'void:build': {
+        command: 'vp build',
         cache: false,
       },
-      'static:serve': {
-        command: 'node scripts/serve-static.mjs',
+      'site:finalize': {
+        command: 'node scripts/site/finalize.mjs',
         cache: false,
       },
-      artifact: {
-        command: 'node scripts/verify-static-artifact.mjs',
+      'site:serve': {
+        command: 'node scripts/site/serve.mjs',
+        cache: false,
+      },
+      'site:verify': {
+        command: 'node scripts/site/verify.mjs',
         cache: false,
       },
       // Offline static site from the on-disk Notion snapshot (no Notion network).
@@ -118,9 +134,9 @@ export default defineConfig({
           'vp run brand:check',
           'vp run font:setup',
           'vp run font:build',
-          'vp run nuxt:generate',
-          'vp run static:finalize',
-          'vp run artifact',
+          'vp run void:build',
+          'vp run site:finalize',
+          'vp run site:verify',
         ],
         cache: false,
       },
@@ -137,4 +153,6 @@ export default defineConfig({
       },
     },
   },
-})
+} satisfies UserConfig
+
+export default defineConfig(config)

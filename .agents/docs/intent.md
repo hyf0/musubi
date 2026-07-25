@@ -6,20 +6,20 @@ This is the selected product goal for the current architecture and implementatio
 
 ## Goal
 
-Musubi is an opinionated, Notion-backed framework for Yunfei's personal website. It turns articles, standalone pages, and public site settings maintained in Notion into a static website at deployment.
+Musubi is an opinionated, Notion-backed framework for Yunfei's personal website. It turns articles, an optional authored Home opening, standalone pages, and public site settings maintained in Notion into a static website at deployment.
 
 ## Success
 
-Musubi succeeds when Yunfei can use Notion as the single editing surface and each deployment either publishes a complete, readable, visually intentional static site from the data fetched for that build or fails clearly without silently omitting or corrupting required content. An ordinary user can fork Musubi, connect the documented Notion workspace, and deploy the default website without changing source code or a local configuration file.
+Musubi succeeds when Yunfei can use Notion as the single editing surface and each deployment either publishes a complete, readable, visually intentional static site from the data fetched for that build or fails clearly without silently omitting or corrupting required content. An ordinary user can fork Musubi, connect a compatible Notion workspace, and deploy the default website without changing source code or a local configuration file.
 
 ## Required website surface
 
-The default website provides a five-Post recent Home, a complete unpaginated chronological Blog archive, Post pages, and standalone Pages. Tags may remain article metadata, but the default website does not expose tag routes. Additional collections, taxonomies, and user-defined page types are added only for a concrete Yunfei requirement.
+The default website provides an optional authored Home opening followed by five recent Posts, a complete unpaginated chronological Blog archive, Post pages, and standalone Pages. Tags may remain article metadata, but the default website does not expose tag routes. Additional collections, taxonomies, and user-defined page types are added only for a concrete Yunfei requirement.
 
 ## Audience and requirement priority
 
 - Musubi primarily serves Yunfei, and Yunfei's own needs remain the main source and driver of its requirements.
-- The documented fork-and-deploy path is a Yunfei-selected requirement. Other ordinary-user needs are considered, but they do not block Yunfei-driven work, take priority over Yunfei's requirements, or redefine the project around downstream users.
+- The fork-and-deploy path is a Yunfei-selected requirement. Other ordinary-user needs are considered, but they do not block Yunfei-driven work, take priority over Yunfei's requirements, or redefine the project around downstream users.
 
 ## Defining qualities
 

@@ -53,6 +53,13 @@ const nodeStarts = computed(() => {
         :context-start="nodeStarts[index]"
       />
     </del>
+    <span v-else-if="node.type === 'span'">
+      <InlineRenderer
+        :nodes="node.children"
+        :context="context"
+        :context-start="nodeStarts[index]"
+      />
+    </span>
     <code v-else-if="node.type === 'inlineCode'">{{ node.value }}</code>
     <br v-else-if="node.type === 'break'" />
     <a

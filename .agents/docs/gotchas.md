@@ -55,6 +55,11 @@ Traps already paid for in this repository. Each entry states what not to do, why
 - **Ruling:** `preprocessNotionMarkdown` runs `separateNotionBlockBoundaries` after empty-block and void-tag rewrites. It inserts a blank line between non-empty lines except inside fenced code, tight lists (including nested items and indented continuations), multi-line blockquotes, and table row sequences.
 - **Residual:** Two adjacent _separate_ Notion quote blocks still look like one multi-line quote in the export (`>\n>`), so they remain one quote after preprocess. Fixing that needs block-structure data the Page-as-Markdown string does not provide.
 
+## Notion inline colors are JSX spans
+
+- Notion Page-as-Markdown exports inline text colors as `<span color="gray">…</span>`, including spans around ordinary Markdown links. These are official Notion syntax, not arbitrary author HTML.
+- **Ruling:** Normalize `span` only as an inline container with an optional literal Notion color. Preserve its normalized children and inert color metadata, but reject expressions, unknown colors, every other attribute, and non-allowlisted JSX or HTML. Rendering stays under Musubi's own visual system rather than accepting source CSS.
+
 ## The deployed HTML must declare its own encoding
 
 - **Do not** assume the host sends `charset`. Cloudflare Workers Static Assets returns `Content-Type: text/html` with no charset parameter, so the browser guesses the encoding; a Chinese-locale browser guesses GBK and every UTF-8 page renders as mojibake.

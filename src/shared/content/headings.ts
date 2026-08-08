@@ -87,6 +87,7 @@ export function extractInlineText(children: readonly MusubiInline[]): string {
         case 'strong':
         case 'emphasis':
         case 'delete':
+        case 'span':
         case 'link':
           return extractInlineText(child.children)
       }

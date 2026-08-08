@@ -616,6 +616,15 @@ function normalizeInline(node: MarkdownSyntaxNode, context: NormalizeContext): M
         }
         return { type: 'break', position: node.position }
       }
+      if (node.name === 'span') {
+        const attributes = readAttributes(node, ['color'], context)
+        return {
+          type: 'span',
+          color: normalizeColor(attributes.get('color'), node, context),
+          children: normalizeInlineChildren(node.children, context),
+          position: node.position,
+        }
+      }
       unsupported(node, context, `Inline JSX tag ${JSON.stringify(node.name)} is not allowlisted`)
     case 'link': {
       const url = parseSafeLinkUrl(node.url ?? '', {

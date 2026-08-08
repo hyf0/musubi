@@ -89,6 +89,48 @@ describe('semantic Callout declarations', () => {
     ).toThrow(/literal string attributes/u)
   })
 
+  it('treats Notion inline color spans as transparent formatting', () => {
+    const document = parseMusubiMarkdown('<span color="gray">text</span>', {
+      pageLabel: 'Inline color fixture',
+    })
+
+    expect(extractTextFromAst(document)).toBe('text')
+    const paragraph = document.children[0]
+    expect(paragraph?.type).toBe('paragraph')
+    if (paragraph?.type !== 'paragraph') throw new Error('Expected a paragraph')
+    expect(paragraph.children[0]).toMatchObject({ type: 'span', color: 'gray' })
+  })
+
+  it('keeps links nested in adjacent Notion inline color spans', () => {
+    const document = parseMusubiMarkdown(
+      '- <span color="gray">[mac](https://github.com/hyfdev/machud)</span><span color="green">[hud](https://github.com/hyfdev/machud)</span><span color="green"> </span>— Opinionated, zero-config terminal system monitor for macOS.',
+      { pageLabel: 'Projects fixture' },
+    )
+
+    expect(extractTextFromAst(document)).toBe(
+      'machud — Opinionated, zero-config terminal system monitor for macOS.',
+    )
+    expect(JSON.stringify(document).match(/"type":"link"/gu)).toHaveLength(2)
+  })
+
+  it('rejects non-Notion attributes and values on inline color spans', () => {
+    expect(() =>
+      parseMusubiMarkdown('<span style="color: red">text</span>', {
+        pageLabel: 'Unsafe span fixture',
+      }),
+    ).toThrow(/Attribute "style" is not allowed/u)
+    expect(() =>
+      parseMusubiMarkdown('<span color="chartreuse">text</span>', {
+        pageLabel: 'Unknown color fixture',
+      }),
+    ).toThrow(/Unknown Notion color/u)
+    expect(() =>
+      parseMusubiMarkdown('<span color={value}>text</span>', {
+        pageLabel: 'Expression span fixture',
+      }),
+    ).toThrow(/literal string attributes/u)
+  })
+
   it('treats Notion empty blocks as spacing rather than public content', () => {
     const document = parseMusubiMarkdown('Before\n<empty-block/>\nAfter', {
       pageLabel: 'Empty block fixture',

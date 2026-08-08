@@ -37,6 +37,7 @@ export function extractInlineTypographyContext(nodes: readonly MusubiInline[]): 
         case 'strong':
         case 'emphasis':
         case 'delete':
+        case 'span':
         case 'link':
           return extractInlineTypographyContext(node.children)
       }
@@ -101,6 +102,7 @@ function collectInlineFontCorpora(
       case 'strong':
       case 'emphasis':
       case 'delete':
+      case 'span':
       case 'link':
         collectInlineCodeCorpora(node.children, code)
         break
@@ -120,6 +122,7 @@ function collectInlineCodeCorpora(nodes: readonly MusubiInline[], code: string[]
       case 'strong':
       case 'emphasis':
       case 'delete':
+      case 'span':
       case 'link':
         collectInlineCodeCorpora(node.children, code)
         break
@@ -217,6 +220,7 @@ function collectInlineTypography(
         collectInlineTypography(node.children, 'emphasis', body, emphasis)
         break
       case 'delete':
+      case 'span':
       case 'link':
         collectInlineTypography(node.children, role, body, emphasis)
         break

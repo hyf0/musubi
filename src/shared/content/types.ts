@@ -178,6 +178,7 @@ export type MusubiInline =
   | MusubiStrong
   | MusubiEmphasis
   | MusubiDelete
+  | MusubiSpan
   | MusubiInlineCode
   | MusubiBreak
   | MusubiLink
@@ -199,6 +200,12 @@ export interface MusubiEmphasis extends MusubiNode {
 
 export interface MusubiDelete extends MusubiNode {
   readonly type: 'delete'
+  readonly children: readonly MusubiInline[]
+}
+
+export interface MusubiSpan extends MusubiNode {
+  readonly type: 'span'
+  readonly color: NotionColor | null
   readonly children: readonly MusubiInline[]
 }
 

@@ -70,7 +70,16 @@ describe('public font corpus', () => {
       type: 'paragraph',
       children: [
         { type: 'text', value: '“' },
-        { type: 'strong', children: [{ type: 'text', value: '中文' }] },
+        {
+          type: 'strong',
+          children: [
+            {
+              type: 'span',
+              color: 'gray',
+              children: [{ type: 'text', value: '中文' }],
+            },
+          ],
+        },
         { type: 'text', value: '”' },
         { type: 'break' },
         { type: 'text', value: '“English”' },

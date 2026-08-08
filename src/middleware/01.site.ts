@@ -51,7 +51,7 @@ export default defineMiddleware(async (c, next) => {
   })
   c.set('headDefaults', {
     title: site.config.title,
-    htmlAttrs: { lang: site.config.lang },
+    htmlAttrs: { lang: site.config.language },
     meta: [
       // Cloudflare Workers Static Assets serves HTML as bare `text/html`, so the document must
       // declare its own encoding. Without it a browser guesses, and a Chinese locale guesses GBK.

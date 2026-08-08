@@ -6,6 +6,7 @@ Start with the record that owns the question instead of treating the folder as a
 | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | What Musubi is for, whom it serves, and what it deliberately is not                          | [Project intent](./intent.md)                                                                 |
 | System boundaries, Notion onboarding/schema, routes, and navigation                          | [Target architecture](./architecture.md)                                                      |
+| Selected pre-public Notion v1 schema contract                                                | [Notion v1 schema contract](./notion-schema.md)                                               |
 | Architecture selections, rejections, and open choices (vouched entries and unstamped drafts) | [Architecture decisions](./architecture-decisions.md)                                         |
 | Selected framework, language, styling, package, core-library, and development-tool choices   | [Target technology stack](./technology-stack.md)                                              |
 | Paid-for traps in Void packaging, prerendering, development, and content parsing             | [Gotchas](./gotchas.md)                                                                       |

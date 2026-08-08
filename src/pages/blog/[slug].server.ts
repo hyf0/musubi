@@ -23,7 +23,7 @@ export const loader = defineHandler<PostPageProps>(async (c) => {
 
 export const head = defineHead<PostPageProps>((_c, response) => {
   const { config, page } = response
-  const canonical = new URL(page.route, config.link).toString()
+  const canonical = new URL(page.route, config.siteUrl).toString()
   const description = page.description || config.description
   return {
     title: `${page.title} — ${config.title}`,

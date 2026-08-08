@@ -6,28 +6,21 @@ const config: SiteConfig = {
   title: 'Musubi',
   description: '',
   author: 'Musubi Team',
-  link: 'https://example.com',
-  lang: 'en',
-  timezone: 'Asia/Singapore',
+  siteUrl: 'https://example.com',
+  language: 'en',
   github: '',
   x: '',
 }
 
 describe('publication date formatting', () => {
-  it('derives an archive year from the same site timezone as the visible date', () => {
-    const value = '2025-12-31T18:30:00Z'
-    expect(formatPublishedDate(value, config, 'month-day')).toBe('Jan 1')
-    expect(formatPublishedYear(value, config)).toBe('2026')
-  })
-
-  it('keeps date-only values in their displayed year', () => {
+  it('formats the normalized calendar date without timezone behavior', () => {
     expect(formatPublishedDate('2026-07-14', config, 'month-day')).toBe('Jul 14')
     expect(formatPublishedYear('2026-07-14', config)).toBe('2026')
   })
 
-  it('treats a date-only value as a calendar date even in UTC+14', () => {
-    const utcPlusFourteen = { ...config, timezone: 'Pacific/Kiritimati' }
-    expect(formatPublishedDate('2026-07-14', utcPlusFourteen, 'month-day')).toBe('Jul 14')
-    expect(formatPublishedYear('2026-07-14', utcPlusFourteen)).toBe('2026')
+  it('uses Config Language for localized output', () => {
+    const chinese = { ...config, language: 'zh-CN' }
+    expect(formatPublishedDate('2026-07-14', chinese, 'month-day')).toBe('7月14日')
+    expect(formatPublishedYear('2026-07-14', chinese)).toBe('2026年')
   })
 })

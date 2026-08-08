@@ -54,12 +54,12 @@
         ],
         "type": "rich_text"
       },
-      "Navigation Order": {
+      "Page:Navigation order": {
         "id": "~%3EIP",
         "number": null,
         "type": "number"
       },
-      "Publish Date": {
+      "Post:Publish date": {
         "date": {
           "end": null,
           "start": "2025-10-28",
@@ -68,7 +68,7 @@
         "id": "dp_o",
         "type": "date"
       },
-      "Show in Navigation": {
+      "Page:Navigation": {
         "checkbox": false,
         "id": "eCNL",
         "type": "checkbox"
@@ -104,22 +104,6 @@
           "name": "Published"
         },
         "type": "select"
-      },
-      "Tags": {
-        "id": "0d131b96-a11a-4078-85a2-06eef84c7be6",
-        "multi_select": [
-          {
-            "color": "pink",
-            "id": "db3d3f0b-413a-4711-aff0-fea1bc30bb84",
-            "name": "React"
-          },
-          {
-            "color": "blue",
-            "id": "8ee26c03-c874-4114-a2dd-e10cc9ea46dd",
-            "name": "Frontend"
-          }
-        ],
-        "type": "multi_select"
       },
       "Title": {
         "id": "title",

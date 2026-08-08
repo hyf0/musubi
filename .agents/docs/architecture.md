@@ -77,36 +77,34 @@ flowchart TB
 
 The visible Notion page and its sole data source are both named `Database`. The internal implementation may still use `content` for the domain containing Posts, Pages, and the optional Home opening; that internal term is not part of setup. The Database data source uses the following project-owned schema:
 
-| Property             | Notion type    | Contract                                                                   |
-| -------------------- | -------------- | -------------------------------------------------------------------------- |
-| `Title`              | `title`        | Required and nonempty for every Published row                              |
-| `Slug`               | `rich_text`    | Required for a Published Post or Page; must be empty for Home              |
-| `Publish Date`       | `date`         | Required for every Published Post                                          |
-| `Status`             | `select`       | Exactly `Draft` or `Published`                                             |
-| `Type`               | `select`       | `Post`, `Page`, or `Home`; legacy `Content` is normalized to `Page`        |
-| `Description`        | `rich_text`    | Optional supporting text and meta-description fallback                     |
-| `Tags`               | `multi_select` | Optional Notion organization metadata; never creates routes                |
-| `Show in Navigation` | `checkbox`     | Optional column; a missing column keeps every Page out of navigation       |
-| `Navigation Order`   | `number`       | Optional column and value; a missing column or empty value means unordered |
+| Property                | Notion type | Contract                                                                                              |
+| ----------------------- | ----------- | ----------------------------------------------------------------------------------------------------- |
+| `Title`                 | `title`     | Required and nonempty for every Published row                                                         |
+| `Slug`                  | `rich_text` | Required for a Published Post or Page; ignored for Home                                               |
+| `Post:Publish date`     | `date`      | Required for a Published Post; uses the literal calendar date in start and ignores time and range end |
+| `Status`                | `select`    | Exactly `Draft` or `Published`                                                                        |
+| `Type`                  | `select`    | Exactly `Post`, `Page`, or `Home`                                                                     |
+| `Description`           | `rich_text` | Optional visible summary and page-specific search and social description for Post and Page            |
+| `Page:Navigation`       | `checkbox`  | Includes a Published Page after fixed Home and Blog navigation items                                  |
+| `Page:Navigation order` | `number`    | Optional order among enabled Pages only                                                               |
 
-A site owner explicitly enables `Show in Navigation` for a Page that belongs in primary navigation. At most one Published Home row may exist; it supplies optional authored prose above the generated recent-Post list at `/`, must leave Slug empty, and never enters navigation. During migration, legacy `Content` values and the former `Date`, `ShowInNavigation`, and `NavigationOrder` property names remain compatible. Draft rows are never public. Invalid enum values, missing required Published fields, duplicate identities, and route conflicts fail generation. The underlying Database page is kept in the Dashboard's `System` area and locked against accidental view or property edits while remaining editable at the row-value level.
+The data source must contain all eight properties with their selected types and exact Status and Type options. Extra user-owned properties are allowed and ignored. The official template also keeps Notion's automatic `Created time` and `Last edited time` properties for private sorting, but Musubi does not read or validate them. Values in fields that do not apply to a row's Type are ignored. At most one Published Home row may exist; it supplies optional authored prose above the generated recent-Post list at `/` and never enters navigation. Draft rows are never public. Invalid applicable values, missing required Published fields, duplicate identities, and route conflicts fail generation. No pre-public field aliases remain.
 
 ### Site settings
 
-The Config data source uses `Help` (`title`), `Key` (`select`), `Value` (`rich_text`), and `Enable` (`checkbox`). Only enabled rows participate. The former title-property name `Description` remains compatible during migration. `SiteConfig` is an ordinary internal object, not a user-facing configuration system.
+The Config data source contains exactly `Help` (`title`), `Key` (`select`), `Value` (`rich_text`), and `Enabled` (`checkbox`). Its Key options are exactly the seven supported settings below. A disabled row or an enabled row with an empty Value contributes no explicit value: a setting with a product default resolves that default, while an optional setting resolves to absence. `SiteConfig` is an ordinary internal object, not a user-facing arbitrary-configuration system.
 
-| Notion key         | `SiteConfig` field | Accepted value                         |
-| ------------------ | ------------------ | -------------------------------------- |
-| `Site Title`       | `title`            | Trimmed nonempty string                |
-| `Site Description` | `description`      | Trimmed nonempty string                |
-| `Author`           | `author`           | Trimmed nonempty string                |
-| `Link`             | `link`             | Absolute `http:` or `https:` URL       |
-| `Lang`             | `lang`             | Structurally valid BCP 47 language tag |
-| `Timezone`         | `timezone`         | Valid IANA time-zone identifier        |
-| `GitHub`           | `github`           | Absolute `http:` or `https:` URL       |
-| `X(Twitter)`       | `x`                | Absolute `http:` or `https:` URL       |
+| Notion key         | `SiteConfig` field | Accepted value                                                               |
+| ------------------ | ------------------ | ---------------------------------------------------------------------------- |
+| `Site title`       | `title`            | Trimmed nonempty string; default `Musubi`                                    |
+| `Site description` | `description`      | Trimmed nonempty string; default `A personal website published from Notion.` |
+| `Author`           | `author`           | Trimmed nonempty string; default `Musubi`                                    |
+| `Site URL`         | `siteUrl`          | Root-only HTTP(S) origin; default `https://example.com/`                     |
+| `Language`         | `language`         | Structurally valid BCP 47 language tag; default `en`                         |
+| `GitHub`           | `github`           | Optional absolute HTTP(S) URL; absent by default                             |
+| `X (Twitter)`      | `x`                | Optional absolute HTTP(S) URL; absent by default                             |
 
-A repository-owned `defaultSiteConfig: SiteConfig` supplies field-level fallbacks only when keys are absent. Optional social-link defaults are empty, so disabling their rows removes them from navigation. Legacy Config keys `Title` and `Description` remain compatible aliases for `Site Title` and `Site Description`; `Since` and `PostsPerPage` rows are validated but ignored because they have no current site behavior. Duplicate canonical or aliased keys, unknown enabled keys, invalid values, and failure to load the authoritative Config source fail generation; Musubi never silently publishes an entirely local fallback site after a Notion failure.
+Duplicate enabled keys, unknown enabled keys, invalid enabled nonempty values, and failure to load the authoritative Config source fail generation. Former keys and aliases are not accepted. Musubi never silently publishes an entirely local fallback site after a Notion failure.
 
 ## Generation pipeline
 
@@ -181,10 +179,10 @@ Musubi does not generate paginated Blog routes, tag routes, Draft routes, or a p
 
 ## Navigation and public behavior
 
-- Published Pages with `Show in Navigation: true` form the site navigation. Rows with a numeric `Navigation Order` sort first by that number; ties and unordered rows sort by title. A missing or false value keeps a Page out of navigation without unpublishing its direct route.
-- Social destinations come from `SiteConfig`, not Page rows. Tags remain optional Post metadata without navigation or route behavior.
+- Primary navigation is fixed Home, then Blog, then Published Pages with `Page:Navigation: true`. Pages with an explicit `Page:Navigation order` sort first and ascending; empty or tied values fall back to Title and then Slug. A false value keeps a Page out of navigation without unpublishing its direct route.
+- Social destinations come from `SiteConfig`, not Page rows.
 - The site provides explicit light and warm dark themes, follows the system preference by default, and offers a reader-controlled choice. Exact tokens, layout, typography, responsive behavior, and the Kami-derived direction live in [DESIGN.md](./DESIGN.md).
-- Locale-sensitive presentation resolves from `SiteConfig`; the repository defaults are `en-SG` and `Asia/Singapore`.
+- Locale-sensitive presentation resolves from `SiteConfig.language`, whose repository default is `en`. Publication dates are calendar dates and have no configurable timezone behavior.
 - The browser receives one static representation of each body. Void emits content-hashed client assets and matching `/_void/pages/*.json` data for hydration and framework navigation. Musubi uses Void links for site-owned cross-page navigation so the browser can reuse those static page-data files without a full document reload; fragment links, downloads, external destinations, and author-owned body links retain ordinary anchor behavior. It does not ship a public content API or runtime rendering Worker. Output size and transferred resources are measured from the generated artifact rather than governed by invented targets.
 
 ## Publication and failure behavior

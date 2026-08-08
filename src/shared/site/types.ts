@@ -11,7 +11,6 @@ export interface SourceContentRow {
   status: ContentStatus
   type: ContentType
   description: string
-  tags: string[]
   showInNavigation?: boolean
   navigationOrder?: number
 }
@@ -27,9 +26,8 @@ export interface SiteConfig {
   title: string
   description: string
   author: string
-  link: string
-  lang: string
-  timezone: string
+  siteUrl: string
+  language: string
   github: string
   x: string
 }
@@ -42,7 +40,6 @@ export interface PublishedPageMeta {
   date?: string
   type: ContentType
   description: string
-  tags: string[]
   showInNavigation: boolean
   navigationOrder?: number
 }
@@ -54,7 +51,6 @@ export interface PublicPageMeta {
   date?: string
   type: ContentType
   description: string
-  tags: string[]
 }
 
 interface CommonContent {
@@ -63,7 +59,6 @@ interface CommonContent {
   slug: string
   route: string
   description: string
-  tags: string[]
   document: MusubiDocument
 }
 
@@ -131,7 +126,6 @@ export function toPublicPageMeta(page: PublishedPageMeta): PublicPageMeta {
     date: page.date,
     type: page.type,
     description: page.description,
-    tags: page.tags,
   }
 }
 
@@ -143,6 +137,5 @@ export function contentToPublicPageMeta(page: SiteContent): PublicPageMeta {
     date: page.type === 'Post' ? page.date : undefined,
     type: page.type,
     description: page.description,
-    tags: page.tags,
   }
 }

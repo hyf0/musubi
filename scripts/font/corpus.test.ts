@@ -30,7 +30,6 @@ const home: Home = {
   route: '/',
   type: 'Home',
   description: '首页描述',
-  tags: ['首页标签'],
   document: homeDocument,
 }
 
@@ -39,9 +38,8 @@ const site: Site = {
     title: '中文站名',
     description: 'Site description',
     author: 'Author',
-    link: 'https://example.com',
-    lang: 'zh-CN',
-    timezone: 'Asia/Singapore',
+    siteUrl: 'https://example.com',
+    language: 'zh-CN',
     github: 'example',
     x: 'example',
   },
@@ -60,7 +58,6 @@ describe('public font corpus', () => {
     expect(corpus.text).toContain('中文导航')
     expect(corpus.text).toContain('首页元数据')
     expect(corpus.text).toContain('首页描述')
-    expect(corpus.text).toContain('首页标签')
     expect(corpus.text).toContain('首页专属内容')
     expect(corpus.code).toContain('const 首页 = true')
     expect(corpus.text).toContain('© 0123456789')

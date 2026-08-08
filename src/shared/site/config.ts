@@ -4,34 +4,23 @@ export const defaultSiteConfig: SiteConfig = {
   title: 'Musubi',
   description: 'A personal website published from Notion.',
   author: 'Musubi',
-  link: 'https://example.com/',
-  lang: 'en-SG',
-  timezone: 'Asia/Singapore',
+  siteUrl: 'https://example.com/',
+  language: 'en',
   github: '',
   x: '',
 }
 
 const configKeys = {
-  'Site Title': 'title',
-  'Site Description': 'description',
+  'Site title': 'title',
+  'Site description': 'description',
   Author: 'author',
-  Link: 'link',
-  Lang: 'lang',
-  Timezone: 'timezone',
+  'Site URL': 'siteUrl',
+  Language: 'language',
   GitHub: 'github',
-  'X(Twitter)': 'x',
-} as const
-
-const configKeyAliases = {
-  Title: 'Site Title',
-  Description: 'Site Description',
+  'X (Twitter)': 'x',
 } as const
 
 type ConfigKey = keyof typeof configKeys
-type ConfigKeyAlias = keyof typeof configKeyAliases
-type LegacyConfigKey = 'Since' | 'PostsPerPage'
-
-const legacyConfigKeys = new Set<LegacyConfigKey>(['Since', 'PostsPerPage'])
 
 function parseNonempty(value: string, row: SourceConfigRow): string {
   const normalized = value.trim()
@@ -55,6 +44,16 @@ function parseUrl(value: string, row: SourceConfigRow): string {
   return url.toString()
 }
 
+function parseSiteUrl(value: string, row: SourceConfigRow): string {
+  const parsed = new URL(parseUrl(value, row))
+  if (parsed.username || parsed.password || parsed.href !== `${parsed.origin}/`) {
+    throw new Error(
+      `${row.sourceLabel}: Site URL must be an origin URL without credentials, a folder path, a query, or a fragment`,
+    )
+  }
+  return parsed.toString()
+}
+
 function parseLanguage(value: string, row: SourceConfigRow): string {
   const normalized = parseNonempty(value, row)
   try {
@@ -64,32 +63,8 @@ function parseLanguage(value: string, row: SourceConfigRow): string {
     }
     return language
   } catch {
-    throw new Error(`${row.sourceLabel}: Lang must be a valid BCP 47 language tag`)
+    throw new Error(`${row.sourceLabel}: Language must be a valid BCP 47 language tag`)
   }
-}
-
-function parseTimezone(value: string, row: SourceConfigRow): string {
-  const normalized = parseNonempty(value, row)
-  try {
-    return new Intl.DateTimeFormat('en', { timeZone: normalized }).resolvedOptions().timeZone
-  } catch {
-    throw new Error(`${row.sourceLabel}: Timezone must be a valid IANA time-zone identifier`)
-  }
-}
-
-function parseInteger(value: string, row: SourceConfigRow, kind: 'year' | 'positive'): number {
-  const normalized = parseNonempty(value, row)
-  if (!/^\d+$/.test(normalized)) {
-    throw new Error(`${row.sourceLabel}: ${row.key} must be a base-10 integer`)
-  }
-  const number = Number(normalized)
-  const valid =
-    Number.isSafeInteger(number) && (kind === 'year' ? number >= 1 && number <= 9999 : number > 0)
-  if (!valid) {
-    const range = kind === 'year' ? 'from 1 through 9999' : 'greater than zero'
-    throw new Error(`${row.sourceLabel}: ${row.key} must be ${range}`)
-  }
-  return number
 }
 
 function parseConfigValue(
@@ -97,18 +72,17 @@ function parseConfigValue(
   row: SourceConfigRow,
 ): SiteConfig[(typeof configKeys)[ConfigKey]] {
   switch (key) {
-    case 'Site Title':
-    case 'Site Description':
+    case 'Site title':
+    case 'Site description':
     case 'Author':
       return parseNonempty(row.value, row)
-    case 'Link':
     case 'GitHub':
-    case 'X(Twitter)':
+    case 'X (Twitter)':
       return parseUrl(row.value, row)
-    case 'Lang':
+    case 'Site URL':
+      return parseSiteUrl(row.value, row)
+    case 'Language':
       return parseLanguage(row.value, row)
-    case 'Timezone':
-      return parseTimezone(row.value, row)
   }
 }
 
@@ -116,26 +90,18 @@ function isConfigKey(key: string): key is ConfigKey {
   return Object.hasOwn(configKeys, key)
 }
 
-function isConfigKeyAlias(key: string): key is ConfigKeyAlias {
-  return Object.hasOwn(configKeyAliases, key)
-}
-
-function isLegacyConfigKey(key: string): key is LegacyConfigKey {
-  return legacyConfigKeys.has(key as LegacyConfigKey)
-}
-
 export function resolveSiteConfig(rows: SourceConfigRow[]): SiteConfig {
   const resolved: SiteConfig = { ...defaultSiteConfig }
-  const seen = new Map<ConfigKey | LegacyConfigKey, SourceConfigRow>()
+  const seen = new Map<ConfigKey, SourceConfigRow>()
 
   for (const row of rows) {
     if (!row.enabled) {
       continue
     }
-    if (!isConfigKey(row.key) && !isConfigKeyAlias(row.key) && !isLegacyConfigKey(row.key)) {
+    if (!isConfigKey(row.key)) {
       throw new Error(`${row.sourceLabel}: unknown enabled Config key ${JSON.stringify(row.key)}`)
     }
-    const key = isConfigKeyAlias(row.key) ? configKeyAliases[row.key] : row.key
+    const key = row.key
     const previous = seen.get(key)
     if (previous) {
       throw new Error(
@@ -144,17 +110,7 @@ export function resolveSiteConfig(rows: SourceConfigRow[]): SiteConfig {
     }
     seen.set(key, row)
 
-    // Existing snapshots may still contain these removed settings. Validate their old value so
-    // malformed data does not become silently acceptable, then ignore them because neither has
-    // current site behavior.
-    if (key === 'Since') {
-      parseInteger(row.value, row, 'year')
-      continue
-    }
-    if (key === 'PostsPerPage') {
-      parseInteger(row.value, row, 'positive')
-      continue
-    }
+    if (!row.value.trim()) continue
 
     const field = configKeys[key]
     const value = parseConfigValue(key, row)

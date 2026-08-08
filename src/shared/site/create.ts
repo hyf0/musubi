@@ -20,23 +20,11 @@ import type {
   SourceContentRow,
 } from './types.ts'
 
-type ExpectedPropertyType =
-  | 'title'
-  | 'rich_text'
-  | 'date'
-  | 'select'
-  | 'multi_select'
-  | 'checkbox'
-  | 'number'
+type ExpectedPropertyType = 'title' | 'rich_text' | 'date' | 'select' | 'checkbox' | 'number'
 
 interface ParsedContentRow {
   pageId: string
   row: SourceContentRow
-}
-
-interface ResolvedProperty {
-  name: string
-  value: Record<string, unknown>
 }
 
 function object(value: unknown, label: string): Record<string, unknown> {
@@ -113,6 +101,46 @@ function validateSourceProperties(
   }
 }
 
+function validateExactSourceProperties(
+  source: unknown,
+  sourceLabel: string,
+  expected: Readonly<Record<string, ExpectedPropertyType>>,
+): void {
+  validateSourceProperties(source, sourceLabel, expected)
+  const actualNames = Object.keys(sourceProperties(source, sourceLabel)).sort()
+  const expectedNames = Object.keys(expected).sort()
+  if (actualNames.join('\n') !== expectedNames.join('\n')) {
+    throw new Error(
+      `${sourceLabel} must contain exactly ${expectedNames.join(', ')}; received ${actualNames.join(', ')}`,
+    )
+  }
+}
+
+function validateSelectOptions(
+  source: unknown,
+  sourceLabel: string,
+  propertyName: string,
+  expectedNames: readonly string[],
+): void {
+  const properties = sourceProperties(source, sourceLabel)
+  const selected = property(properties, propertyName, 'select', sourceLabel)
+  const select = object(selected.select, `${sourceLabel}.${propertyName}.select`)
+  const names = array(select.options, `${sourceLabel}.${propertyName}.select.options`).map(
+    (option, index) =>
+      string(
+        object(option, `${sourceLabel}.${propertyName}.select.options[${index}]`).name,
+        `${sourceLabel}.${propertyName}.select.options[${index}].name`,
+      ),
+  )
+  const actual = [...names].sort()
+  const expected = [...expectedNames].sort()
+  if (new Set(names).size !== names.length || actual.join('\n') !== expected.join('\n')) {
+    throw new Error(
+      `${sourceLabel}.${propertyName} must define exactly these options: ${expectedNames.join(', ')}; received ${names.join(', ')}`,
+    )
+  }
+}
+
 function pageProperties(value: unknown, sourceLabel: string): Record<string, unknown> {
   const page = object(value, sourceLabel)
   if (page.object !== 'page') throw new Error(`${sourceLabel}.object must be page`)
@@ -137,62 +165,6 @@ function property(
   return result
 }
 
-function optionalProperty(
-  properties: Record<string, unknown>,
-  name: string,
-  expectedType: ExpectedPropertyType,
-  sourceLabel: string,
-): Record<string, unknown> | undefined {
-  const value = properties[name]
-  if (!value) return undefined
-  const result = object(value, `${sourceLabel}.${name}`)
-  if (result.type !== expectedType) {
-    throw new Error(
-      `${sourceLabel}.${name} must be ${expectedType} when present, received ${String(result.type)}`,
-    )
-  }
-  return result
-}
-
-function aliasedProperty(
-  properties: Record<string, unknown>,
-  names: readonly string[],
-  expectedType: ExpectedPropertyType,
-  sourceLabel: string,
-  required = true,
-): ResolvedProperty | undefined {
-  const matches = names.filter((name) => properties[name] !== undefined)
-  const canonicalName = names[0]!
-  if (matches.length > 1) {
-    throw new Error(
-      `${sourceLabel} has conflicting ${matches.join(' and ')} properties; keep only ${canonicalName}`,
-    )
-  }
-  const name = matches[0]
-  if (!name) {
-    if (!required) return undefined
-    throw new Error(`${sourceLabel} is missing ${canonicalName} (${expectedType})`)
-  }
-  const value = object(properties[name], `${sourceLabel}.${name}`)
-  if (value.type !== expectedType) {
-    const qualifier = required ? '' : ' when present'
-    throw new Error(
-      `${sourceLabel}.${name} must be ${expectedType}${qualifier}, received ${String(value.type)}`,
-    )
-  }
-  return { name, value }
-}
-
-function validateAliasedSourceProperty(
-  source: unknown,
-  sourceLabel: string,
-  names: readonly string[],
-  expectedType: ExpectedPropertyType,
-  required = true,
-): void {
-  aliasedProperty(sourceProperties(source, sourceLabel), names, expectedType, sourceLabel, required)
-}
-
 function richTextPlainText(value: unknown, label: string): string {
   return array(value, label)
     .map((item, index) =>
@@ -206,10 +178,7 @@ export function normalizeNotionContentType(
   sourceLabel: string,
 ): SourceContentRow['type'] {
   if (value === 'Post' || value === 'Page' || value === 'Home') return value
-  if (value === 'Content') return 'Page'
-  throw new Error(
-    `${sourceLabel}.Type must be Post, Page, or Home (legacy Content remains compatible)`,
-  )
+  throw new Error(`${sourceLabel}.Type must be Post, Page, or Home`)
 }
 
 function selectName(value: Record<string, unknown>, label: string): string | undefined {
@@ -227,25 +196,12 @@ function parseContentRow(snapshot: LoadedNotionPageSnapshot): ParsedContentRow {
     ? `${snapshot.filename} (${JSON.stringify(title.trim())})`
     : snapshot.filename
   const slugProperty = property(properties, 'Slug', 'rich_text', sourceLabel)
-  const dateProperty = aliasedProperty(properties, ['Publish Date', 'Date'], 'date', sourceLabel)!
+  const dateProperty = property(properties, 'Post:Publish date', 'date', sourceLabel)
   const statusProperty = property(properties, 'Status', 'select', sourceLabel)
   const typeProperty = property(properties, 'Type', 'select', sourceLabel)
   const descriptionProperty = property(properties, 'Description', 'rich_text', sourceLabel)
-  const tagsProperty = optionalProperty(properties, 'Tags', 'multi_select', sourceLabel)
-  const navigationVisibility = aliasedProperty(
-    properties,
-    ['Show in Navigation', 'ShowInNavigation'],
-    'checkbox',
-    sourceLabel,
-    false,
-  )
-  const navigationOrder = aliasedProperty(
-    properties,
-    ['Navigation Order', 'NavigationOrder'],
-    'number',
-    sourceLabel,
-    false,
-  )
+  const navigationVisibility = property(properties, 'Page:Navigation', 'checkbox', sourceLabel)
+  const navigationOrder = property(properties, 'Page:Navigation order', 'number', sourceLabel)
 
   const status = selectName(statusProperty, `${sourceLabel}.Status`)
   if (status !== 'Published') {
@@ -255,29 +211,21 @@ function parseContentRow(snapshot: LoadedNotionPageSnapshot): ParsedContentRow {
     selectName(typeProperty, `${sourceLabel}.Type`),
     sourceLabel,
   )
-  const dateValue = dateProperty.value.date
+  const dateValue = type === 'Post' ? dateProperty.date : null
   const date =
     dateValue === null
       ? undefined
       : string(
-          object(dateValue, `${sourceLabel}.${dateProperty.name}.date`).start,
-          `${sourceLabel}.${dateProperty.name}.date.start`,
+          object(dateValue, `${sourceLabel}.Post:Publish date.date`).start,
+          `${sourceLabel}.Post:Publish date.date.start`,
         )
-  const tagValues = tagsProperty
-    ? array(tagsProperty.multi_select, `${sourceLabel}.Tags.multi_select`).map((tag, index) =>
-        string(
-          object(tag, `${sourceLabel}.Tags.multi_select[${index}]`).name,
-          `${sourceLabel}.Tags.multi_select[${index}].name`,
-        ),
-      )
-    : []
-  const order = navigationOrder?.value.number
+  const order = type === 'Page' ? navigationOrder.number : undefined
   if (
     order !== undefined &&
     order !== null &&
     (typeof order !== 'number' || !Number.isFinite(order))
   ) {
-    throw new Error(`${sourceLabel}.Navigation Order must be a finite number`)
+    throw new Error(`${sourceLabel}.Page:Navigation order must be a finite number`)
   }
 
   return {
@@ -293,11 +241,7 @@ function parseContentRow(snapshot: LoadedNotionPageSnapshot): ParsedContentRow {
         descriptionProperty.rich_text,
         `${sourceLabel}.Description.rich_text`,
       ),
-      tags: tagValues,
-      showInNavigation:
-        navigationVisibility === undefined
-          ? undefined
-          : navigationVisibility.value.checkbox === true,
+      showInNavigation: type === 'Page' ? navigationVisibility.checkbox === true : undefined,
       navigationOrder: typeof order === 'number' ? order : undefined,
     },
   }
@@ -306,17 +250,14 @@ function parseContentRow(snapshot: LoadedNotionPageSnapshot): ParsedContentRow {
 function parseConfigRow(value: unknown, index: number, filename: string): SourceConfigRow {
   const initialLabel = `${filename}.configRows[${index}]`
   const properties = pageProperties(value, initialLabel)
-  const helpProperty = aliasedProperty(properties, ['Help', 'Description'], 'title', initialLabel)!
-  const description = richTextPlainText(
-    helpProperty.value.title,
-    `${initialLabel}.${helpProperty.name}.title`,
-  )
+  const helpProperty = property(properties, 'Help', 'title', initialLabel)
+  const description = richTextPlainText(helpProperty.title, `${initialLabel}.Help.title`)
   const sourceLabel = description.trim()
     ? `${initialLabel} (${JSON.stringify(description.trim())})`
     : initialLabel
   const keyProperty = property(properties, 'Key', 'select', sourceLabel)
   const valueProperty = property(properties, 'Value', 'rich_text', sourceLabel)
-  const enabledProperty = property(properties, 'Enable', 'checkbox', sourceLabel)
+  const enabledProperty = property(properties, 'Enabled', 'checkbox', sourceLabel)
 
   return {
     sourceLabel,
@@ -377,7 +318,6 @@ function createContent(meta: PublishedPageMeta, document: MusubiDocument): SiteC
     slug: meta.slug,
     route: meta.route,
     description: meta.description,
-    tags: meta.tags,
     document,
   }
   if (meta.type === 'Post') {
@@ -405,46 +345,41 @@ export async function createSite(
     {
       Title: 'title',
       Slug: 'rich_text',
+      'Post:Publish date': 'date',
       Status: 'select',
       Type: 'select',
       Description: 'rich_text',
+      'Page:Navigation': 'checkbox',
+      'Page:Navigation order': 'number',
     },
-    { Tags: 'multi_select' },
   )
-  validateAliasedSourceProperty(
+  validateSelectOptions(
     snapshot.config.contentDataSource,
     `${snapshot.configFilename}.contentDataSource`,
-    ['Publish Date', 'Date'],
-    'date',
+    'Status',
+    ['Draft', 'Published'],
   )
-  validateAliasedSourceProperty(
+  validateSelectOptions(
     snapshot.config.contentDataSource,
     `${snapshot.configFilename}.contentDataSource`,
-    ['Show in Navigation', 'ShowInNavigation'],
-    'checkbox',
-    false,
+    'Type',
+    ['Post', 'Page', 'Home'],
   )
-  validateAliasedSourceProperty(
-    snapshot.config.contentDataSource,
-    `${snapshot.configFilename}.contentDataSource`,
-    ['Navigation Order', 'NavigationOrder'],
-    'number',
-    false,
-  )
-  validateSourceProperties(
+  validateExactSourceProperties(
     snapshot.config.configDataSource,
     `${snapshot.configFilename}.configDataSource`,
     {
+      Help: 'title',
       Key: 'select',
       Value: 'rich_text',
-      Enable: 'checkbox',
+      Enabled: 'checkbox',
     },
   )
-  validateAliasedSourceProperty(
+  validateSelectOptions(
     snapshot.config.configDataSource,
     `${snapshot.configFilename}.configDataSource`,
-    ['Help', 'Description'],
-    'title',
+    'Key',
+    ['Site title', 'Site description', 'Author', 'Site URL', 'Language', 'GitHub', 'X (Twitter)'],
   )
 
   const configRows = snapshot.config.configRows.map((row, index) =>

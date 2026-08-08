@@ -12,7 +12,7 @@ export const loader = defineHandler<BlogPageProps>(async () => {
 })
 
 export const head = defineHead<BlogPageProps>((_c, page) => {
-  const canonical = new URL('/blog', page.config.link).toString()
+  const canonical = new URL('/blog', page.config.siteUrl).toString()
   return {
     title: `Blog — ${page.config.title}`,
     link: [{ rel: 'canonical', href: canonical }],

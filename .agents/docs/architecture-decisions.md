@@ -4,14 +4,86 @@ Judgments the human actually expressed about architecture — selections, accept
 
 ## Decided
 
-### Notion schema terminology
+### Notion schema terminology and type scope
 
-[VOUCHED @hyfdev 2026-07-19]
+[VOUCHED @hyfdev 2026-08-08]
 
-- **Ruling:** The default Notion Content schema must use natural English Title Case: `Title`, `Slug`, `Publish Date`, `Status`, `Type`, `Description`, `Tags`, `Show in Navigation`, and `Navigation Order`. Config must likewise use `Site Title` and `Site Description` for the two site-level values. Established publishing terms such as Post, Page, Slug, Status, Tags, and Publish Date take precedence over invented labels.
-- **Limits:** `Description` remains broader than WordPress's Excerpt because Musubi permits any optional supporting text below a content title, not only a summary. `Site Description` is the separate site-wide metadata value. Spaces and capitalization are part of the canonical visible schema but are not themselves technical risks. Legacy `Date`, `ShowInNavigation`, `NavigationOrder`, and Config `Title` or `Description` names may remain accepted during migration. This decision does not make arbitrary user-created properties part of Musubi's contract.
-- **Why:** Yunfei prefers `Publish Date` visually, wants the schema to borrow familiar terminology from established publishing systems such as WordPress, and does not want technical camel-case names or prefixes to make the workspace feel like an implementation detail. The system boundary should instead be communicated through the Dashboard's `System` area, database locking, exact type validation, and restrained daily views.
-- **Source:** Yunfei He (@hyfdev), 2026-07-19, explicit terminology and casing decision during the Notion workspace redesign.
+- **Ruling:** The default Notion Content schema must use unprefixed `Title`, `Slug`, `Status`, `Type`, and `Description` for properties shared by more than one content type, and `Post:Publish date`, `Page:Navigation`, and `Page:Navigation order` for properties owned by one type. The colon is a structural namespace separator with no following whitespace, and the suffix uses Notion-style sentence case. `Description` remains shared by Post and Page and supplies both the visible page summary and page-specific HTML and social-preview description, falling back to Config `Site description` when empty. `Tags` is not part of Musubi's default schema or product-owned content model.
+- **Limits:** Arbitrary user-created properties remain outside Musubi's contract. Former `Publish Date`, `Date`, `Show in Navigation`, `ShowInNavigation`, `Navigation Order`, `NavigationOrder`, `Post:publish-date`, `Page:navigation`, and `Page:navigation-order` names must not remain accepted as compatibility aliases.
+- **Why:** Yunfei selected a visible `Type:field` convention only for properties that belong to one content type, kept shared fields unprefixed, and removed `Tags` because adding a product-owned field later is easier than removing one after users depend on it. After seeing Notion's inline property descriptions and native sentence-case labels, he selected the compact no-space namespace form as the more professional, elegant, and self-consistent final style.
+- **Source:** Yunfei He (@hyfdev), 2026-07-19 original shared-field terminology direction and 2026-08-08 explicit removal, prefixing, shared-Description, inline-description, namespace-spacing, sentence-case, and final field-name decisions during the Notion template review.
+
+### Config language and timezone
+
+[VOUCHED @hyfdev 2026-08-08]
+
+- **Ruling:** The Config key `Lang` must be renamed to `Language`, and the currently unused `Timezone` key must be removed from the v1 template and implementation.
+- **Limits:** `Language` continues to accept a BCP 47 language tag and control both the HTML `lang` attribute and date-formatting locale. `Post:Publish date` has calendar-date semantics even when its Notion value also contains a time or range, so publication dates do not require configurable timezone behavior.
+- **Why:** Yunfei accepted the more explicit Language label and chose to remove Timezone after confirming that it has no effect on the current date-only publication values; no additional rationale was given.
+- **Source:** Yunfei He (@hyfdev), 2026-08-08, explicit decisions during the Notion template review.
+
+### Publication date interpretation
+
+[VOUCHED @hyfdev 2026-08-08]
+
+- **Ruling:** `Post:Publish date` must use the calendar-date portion of the Notion date's start value. If the value includes a time, Musubi ignores the time and offset without converting it to another timezone; if it is a range, Musubi ignores the end. Publication scheduling is not supported: Status alone controls inclusion in a build, while the publication date is display and ordering data.
+- **Limits:** A Published Post still requires a start value containing a valid Gregorian calendar date. Ignored time, offset, timezone, and range-end data do not enter Musubi's content model. This does not define a future scheduling feature.
+- **Why:** Yunfei wants Musubi to care only about one date even if Notion stores a time or range, with a range interpreted from its start date, and explicitly does not support scheduled publication; no additional rationale was given.
+- **Source:** Yunfei He (@hyfdev), 2026-08-08, explicit decisions during the Notion template review.
+
+### Dashboard-only automatic timestamps
+
+[VOUCHED @hyfdev 2026-08-08]
+
+- **Ruling:** The official Notion template must retain Notion's automatic `Created time` and `Last edited time` properties for private Dashboard sorting. They are authoring helpers, not Musubi-owned content properties, and Musubi must neither read nor validate them.
+- **Limits:** Users may rename or delete either property without affecting site generation. They must not enter the public content model, checked-in product schema, or required-field documentation; Notion views may sort by them independently of Musubi.
+- **Why:** Yunfei uses the automatic timestamps for internal Dashboard sorting and explicitly chose to retain both; no additional rationale was given.
+- **Source:** Yunfei He (@hyfdev), 2026-08-08, explicit decision during the Notion template review.
+
+### Config field names and defaults
+
+[VOUCHED @hyfdev 2026-08-08]
+
+- **Ruling:** The Config properties are exactly `Help`, `Key`, `Value`, and `Enabled`. Its exact Key options are `Site title`, `Site description`, `Author`, `Site URL`, `Language`, `GitHub`, and `X (Twitter)`. The selected defaults are `Site title = Musubi`, `Site description = A personal website published from Notion.`, `Author = Musubi`, `Site URL = https://example.com/`, and `Language = en`; `GitHub` and `X (Twitter)` have no value by default.
+- **Limits:** `Help` and `Key` remain precise descriptions of a constrained Config key/value table rather than being generalized to `Description` and `Setting`. `Enabled` describes stored checkbox state. Yunfei's live Config explicitly supplies `https://musubi.hyf.me/`, so its deployment does not use the Site URL fallback. A disabled or empty required setting resolves its product default, while a disabled or empty optional setting resolves to absence.
+- **Why:** Yunfei considers the parenthetical Twitter name clearer than `X` alone, selected Notion-style sentence case and ordinary parenthesis spacing, and explicitly accepted the complete naming review as professional, elegant, and self-consistent.
+- **Source:** Yunfei He (@hyfdev), 2026-08-08, explicit defaults, social-name, sentence-case, checkbox-state, and complete Config field-name decisions during the Notion template review.
+
+### Site URL v1 scope and fallback
+
+[VOUCHED @hyfdev 2026-08-08]
+
+- **Ruling:** The Config key for the public website address must be `Site URL`, replacing `Link`. V1 supports only origin-root deployment and does not support a folder base path such as `/xxx-website/`. When Site URL is disabled, absent, or empty, Musubi must resolve the ordinary `https://example.com/` default and continue generating canonical and `og:url` metadata through the same path used for an explicit value.
+- **Limits:** Until the owner configures the real public URL, generated metadata intentionally points at the reserved example origin. Supporting a deployment base path later must update the complete router, internal-link, static-asset, Void page-data, output, and metadata pipeline rather than merely permit a pathname in Config. The former `Link` key must be removed during the pre-public cutover rather than retained as an alias.
+- **Why:** Yunfei prefers one uniform Config default-resolution path over special omission logic for missing site identity and selected root-only deployment for v1.
+- **Source:** Yunfei He (@hyfdev), 2026-08-08, explicit URL naming, fallback, and deployment-scope decisions during the Notion template review.
+
+### Content validation scope
+
+[VOUCHED @hyfdev 2026-08-08]
+
+- **Ruling:** Musubi must ignore values in properties that do not apply to a row's selected Type rather than reject the Published row. It must still reject missing or invalid values required to emit the selected type, invalid Status or Type values, duplicate or conflicting public routes, and other conditions that make deterministic publication impossible.
+- **Limits:** Ignoring an inapplicable value does not make that property apply to the type and does not preserve it in Musubi's public model. Applicable values still follow their own contracts, including the selected start-calendar-date interpretation for `Post:Publish date`.
+- **Why:** Yunfei considers strict rejection of harmless values in type-inapplicable fields unnecessary; no additional rationale was given.
+- **Source:** Yunfei He (@hyfdev), 2026-08-08, explicit decision during the Notion template review.
+
+### Primary navigation v1
+
+[VOUCHED @hyfdev 2026-08-08]
+
+- **Ruling:** The v1 primary navigation must render fixed Home, then fixed Blog, then Published Pages with `Page:Navigation` enabled. `Page:Navigation` is a checkbox. The optional numeric `Page:Navigation order` sorts only enabled Pages: explicit values sort first and ascending, while empty or tied values fall back to Title and then Slug.
+- **Limits:** V1 does not place Pages before Home or between Home and Blog and does not model an arbitrary ordered navigation collection. A hidden Page may retain its order, which has no effect until navigation is enabled again. Values on Post and Home rows are ignored under the accepted validation policy.
+- **Why:** Yunfei chose the smaller fixed model after the signed global-order proposal failed to handle multiple Pages cleanly; arbitrary placement remains hypothetical, and a future dedicated Navigation model can be added if a real requirement appears.
+- **Source:** Yunfei He (@hyfdev), 2026-08-08, explicit decision during the Notion template review.
+
+### Pre-public Notion schema cutover
+
+[VOUCHED @hyfdev 2026-08-08]
+
+- **Ruling:** Before Musubi is public, settle the complete Notion schema first and then update the implementation, both of Yunfei's live Dashboards, and the checked-in snapshot together in one clean cutover; do not keep legacy field aliases merely to avoid this one-time migration. That cutover was authorized and completed on 2026-08-08 after verified private backups of both Dashboards were created.
+- **Limits:** This governs the pre-public project and does not decide a compatibility policy for a future important public product. Removed live values remain recovery data in the private backups, not compatibility inputs accepted by the implementation.
+- **Why:** Yunfei wants to avoid permanent compatibility complexity in a project that primarily serves him and therefore wants the Notion field design treated carefully before public release.
+- **Source:** Yunfei He (@hyfdev), 2026-08-08, explicit correction during the Notion template review followed by explicit authorization to delete the selected fields and migrate both Dashboards directly.
 
 ### User-facing Notion page inputs
 

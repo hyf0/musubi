@@ -16,11 +16,11 @@ export const loader = defineHandler<HomePageProps>(async () => {
 
 export const head = defineHead<HomePageProps>((_c, page) => ({
   title: page.config.title,
-  link: [{ rel: 'canonical', href: page.config.link }],
+  link: [{ rel: 'canonical', href: page.config.siteUrl }],
   meta: [
     { property: 'og:title', content: page.config.title },
     { property: 'og:description', content: page.config.description },
     { property: 'og:type', content: 'website' },
-    { property: 'og:url', content: page.config.link },
+    { property: 'og:url', content: page.config.siteUrl },
   ],
 }))

@@ -47,22 +47,22 @@
       "type": "database_id"
     },
     "properties": {
-      "Enable": {
+      "Enabled": {
         "checkbox": {},
-        "description": null,
+        "description": "Use Value when enabled; otherwise use the default or omit an optional setting.",
         "id": "%3Aace",
-        "name": "Enable",
+        "name": "Enabled",
         "type": "checkbox"
       },
       "Help": {
-        "description": null,
+        "description": "What this setting controls.",
         "id": "title",
         "name": "Help",
         "title": {},
         "type": "title"
       },
       "Key": {
-        "description": null,
+        "description": "Musubi setting name. Use one row for each supported key.",
         "id": "voaz",
         "name": "Key",
         "select": {
@@ -70,14 +70,14 @@
             {
               "color": "gray",
               "description": null,
-              "id": "f3dc5b9c-0bbf-4983-8f59-4cb21640c874",
-              "name": "Site Title"
+              "id": "433633d2-89a1-4319-98b8-2539a5f85c3f",
+              "name": "Site title"
             },
             {
               "color": "gray",
               "description": null,
-              "id": "d2f60c5a-eba3-40ee-83a5-938946a1c254",
-              "name": "Site Description"
+              "id": "a00bbfdb-5982-415c-8477-e98d656a4682",
+              "name": "Site description"
             },
             {
               "color": "default",
@@ -88,20 +88,14 @@
             {
               "color": "default",
               "description": null,
-              "id": "109d2302-dca8-4224-978a-3842f899f535",
-              "name": "Link"
+              "id": "005a6f72-c74b-4e6b-b895-bd547e741624",
+              "name": "Site URL"
             },
             {
               "color": "default",
               "description": null,
-              "id": "2228ee5b-bfd6-40bc-a3e9-7c05fb10d4a6",
-              "name": "Lang"
-            },
-            {
-              "color": "gray",
-              "description": null,
-              "id": "ed97b501-6040-495b-9aa9-8de5800088fe",
-              "name": "Timezone"
+              "id": "3dd63657-2122-4ff7-a990-3d3b74eb794a",
+              "name": "Language"
             },
             {
               "color": "default",
@@ -112,15 +106,15 @@
             {
               "color": "default",
               "description": null,
-              "id": "a3163a67-3a7e-488e-8460-dd24541c8d4b",
-              "name": "X(Twitter)"
+              "id": "91508fb8-72c2-4904-839d-66109e1768f7",
+              "name": "X (Twitter)"
             }
           ]
         },
         "type": "select"
       },
       "Value": {
-        "description": null,
+        "description": "Setting value. Leave empty to use the default or omit an optional setting.",
         "id": "%3EMJR",
         "name": "Value",
         "rich_text": {},
@@ -174,7 +168,7 @@
         "type": "data_source_id"
       },
       "properties": {
-        "Enable": {
+        "Enabled": {
           "checkbox": true,
           "id": "%3Aace",
           "type": "checkbox"
@@ -192,9 +186,9 @@
                 "underline": false
               },
               "href": null,
-              "plain_text": "Shown in browser tab and site header",
+              "plain_text": "Site name used in the browser title and site header.",
               "text": {
-                "content": "Shown in browser tab and site header",
+                "content": "Site name used in the browser title and site header.",
                 "link": null
               },
               "type": "text"
@@ -206,8 +200,8 @@
           "id": "voaz",
           "select": {
             "color": "gray",
-            "id": "f3dc5b9c-0bbf-4983-8f59-4cb21640c874",
-            "name": "Site Title"
+            "id": "433633d2-89a1-4319-98b8-2539a5f85c3f",
+            "name": "Site title"
           },
           "type": "select"
         },
@@ -262,7 +256,7 @@
         "type": "data_source_id"
       },
       "properties": {
-        "Enable": {
+        "Enabled": {
           "checkbox": true,
           "id": "%3Aace",
           "type": "checkbox"
@@ -280,9 +274,9 @@
                 "underline": false
               },
               "href": null,
-              "plain_text": "Used in meta tags for SEO and social previews",
+              "plain_text": "Default search and social-preview description when content has no Description.",
               "text": {
-                "content": "Used in meta tags for SEO and social previews",
+                "content": "Default search and social-preview description when content has no Description.",
                 "link": null
               },
               "type": "text"
@@ -294,8 +288,8 @@
           "id": "voaz",
           "select": {
             "color": "gray",
-            "id": "d2f60c5a-eba3-40ee-83a5-938946a1c254",
-            "name": "Site Description"
+            "id": "a00bbfdb-5982-415c-8477-e98d656a4682",
+            "name": "Site description"
           },
           "type": "select"
         },
@@ -350,7 +344,7 @@
         "type": "data_source_id"
       },
       "properties": {
-        "Enable": {
+        "Enabled": {
           "checkbox": true,
           "id": "%3Aace",
           "type": "checkbox"
@@ -368,9 +362,9 @@
                 "underline": false
               },
               "href": null,
-              "plain_text": "Shown in footer copyright",
+              "plain_text": "Name shown in the footer.",
               "text": {
-                "content": "Shown in footer copyright",
+                "content": "Name shown in the footer.",
                 "link": null
               },
               "type": "text"
@@ -438,7 +432,7 @@
         "type": "data_source_id"
       },
       "properties": {
-        "Enable": {
+        "Enabled": {
           "checkbox": true,
           "id": "%3Aace",
           "type": "checkbox"
@@ -456,9 +450,9 @@
                 "underline": false
               },
               "href": null,
-              "plain_text": "GitHub icon link in navbar",
+              "plain_text": "Optional GitHub URL shown in navigation.",
               "text": {
-                "content": "GitHub icon link in navbar",
+                "content": "Optional GitHub URL shown in navigation.",
                 "link": null
               },
               "type": "text"
@@ -528,7 +522,7 @@
         "type": "data_source_id"
       },
       "properties": {
-        "Enable": {
+        "Enabled": {
           "checkbox": true,
           "id": "%3Aace",
           "type": "checkbox"
@@ -546,9 +540,9 @@
                 "underline": false
               },
               "href": null,
-              "plain_text": "X/Twitter icon link in navbar",
+              "plain_text": "Optional X/Twitter URL shown in navigation.",
               "text": {
-                "content": "X/Twitter icon link in navbar",
+                "content": "Optional X/Twitter URL shown in navigation.",
                 "link": null
               },
               "type": "text"
@@ -560,8 +554,8 @@
           "id": "voaz",
           "select": {
             "color": "default",
-            "id": "a3163a67-3a7e-488e-8460-dd24541c8d4b",
-            "name": "X(Twitter)"
+            "id": "91508fb8-72c2-4904-839d-66109e1768f7",
+            "name": "X (Twitter)"
           },
           "type": "select"
         },
@@ -618,7 +612,7 @@
         "type": "data_source_id"
       },
       "properties": {
-        "Enable": {
+        "Enabled": {
           "checkbox": true,
           "id": "%3Aace",
           "type": "checkbox"
@@ -636,9 +630,9 @@
                 "underline": false
               },
               "href": null,
-              "plain_text": "HTML lang attribute, e.g. en, zh-CN",
+              "plain_text": "BCP 47 language tag used for HTML language and date formatting, for example en or zh-CN.",
               "text": {
-                "content": "HTML lang attribute, e.g. en, zh-CN",
+                "content": "BCP 47 language tag used for HTML language and date formatting, for example en or zh-CN.",
                 "link": null
               },
               "type": "text"
@@ -650,8 +644,9 @@
           "id": "voaz",
           "select": {
             "color": "default",
-            "id": "2228ee5b-bfd6-40bc-a3e9-7c05fb10d4a6",
-            "name": "Lang"
+            "description": null,
+            "id": "3dd63657-2122-4ff7-a990-3d3b74eb794a",
+            "name": "Language"
           },
           "type": "select"
         },
@@ -706,7 +701,7 @@
         "type": "data_source_id"
       },
       "properties": {
-        "Enable": {
+        "Enabled": {
           "checkbox": true,
           "id": "%3Aace",
           "type": "checkbox"
@@ -724,9 +719,9 @@
                 "underline": false
               },
               "href": null,
-              "plain_text": "Canonical site URL for meta tags",
+              "plain_text": "Public origin used for canonical URLs, Open Graph URLs, and same-origin link detection.",
               "text": {
-                "content": "Canonical site URL for meta tags",
+                "content": "Public origin used for canonical URLs, Open Graph URLs, and same-origin link detection.",
                 "link": null
               },
               "type": "text"
@@ -738,8 +733,9 @@
           "id": "voaz",
           "select": {
             "color": "default",
-            "id": "109d2302-dca8-4224-978a-3842f899f535",
-            "name": "Link"
+            "description": null,
+            "id": "005a6f72-c74b-4e6b-b895-bd547e741624",
+            "name": "Site URL"
           },
           "type": "select"
         },
@@ -771,94 +767,6 @@
       },
       "public_url": "https://hyf0.notion.site/Canonical-site-URL-for-meta-tags-315fe8ddacd681f4a044dc4ffaece33d",
       "url": "https://app.notion.com/p/Canonical-site-URL-for-meta-tags-315fe8ddacd681f4a044dc4ffaece33d"
-    },
-    {
-      "cover": null,
-      "created_by": {
-        "id": "39bfe8dd-acd6-81c8-9b7c-002761709f06",
-        "object": "user"
-      },
-      "created_time": "2026-07-16T14:21:00.000Z",
-      "icon": null,
-      "id": "39ffe8dd-acd6-81a3-b24b-d056bcbe35b9",
-      "in_trash": false,
-      "is_archived": false,
-      "is_locked": false,
-      "last_edited_by": {
-        "id": "39bfe8dd-acd6-81c8-9b7c-002761709f06",
-        "object": "user"
-      },
-      "last_edited_time": "2026-07-16T14:21:00.000Z",
-      "object": "page",
-      "parent": {
-        "data_source_id": "2d3fe8dd-acd6-804e-83ea-000bc910780c",
-        "database_id": "2d3fe8dd-acd6-808c-806e-fac661639e17",
-        "type": "data_source_id"
-      },
-      "properties": {
-        "Enable": {
-          "checkbox": true,
-          "id": "%3Aace",
-          "type": "checkbox"
-        },
-        "Help": {
-          "id": "title",
-          "title": [
-            {
-              "annotations": {
-                "bold": false,
-                "code": false,
-                "color": "default",
-                "italic": false,
-                "strikethrough": false,
-                "underline": false
-              },
-              "href": null,
-              "plain_text": "Publication timezone",
-              "text": {
-                "content": "Publication timezone",
-                "link": null
-              },
-              "type": "text"
-            }
-          ],
-          "type": "title"
-        },
-        "Key": {
-          "id": "voaz",
-          "select": {
-            "color": "gray",
-            "id": "ed97b501-6040-495b-9aa9-8de5800088fe",
-            "name": "Timezone"
-          },
-          "type": "select"
-        },
-        "Value": {
-          "id": "%3EMJR",
-          "rich_text": [
-            {
-              "annotations": {
-                "bold": false,
-                "code": false,
-                "color": "default",
-                "italic": false,
-                "strikethrough": false,
-                "underline": false
-              },
-              "href": null,
-              "plain_text": "Asia/Singapore",
-              "text": {
-                "content": "Asia/Singapore",
-                "link": null
-              },
-              "type": "text"
-            }
-          ],
-          "type": "rich_text"
-        }
-      },
-      "public_url": "https://hyf0.notion.site/Publication-timezone-39ffe8ddacd681a3b24bd056bcbe35b9",
-      "url": "https://app.notion.com/p/Publication-timezone-39ffe8ddacd681a3b24bd056bcbe35b9"
     }
   ],
   "contentDataSource": {
@@ -892,44 +800,44 @@
     },
     "properties": {
       "Description": {
-        "description": null,
+        "description": "Optional summary shown for Post and Page and used for that page's search and social-preview description.",
         "id": "10243cf2-965e-450d-99ee-dc6076017363",
         "name": "Description",
         "rich_text": {},
         "type": "rich_text"
       },
-      "Navigation Order": {
-        "description": null,
+      "Page:Navigation order": {
+        "description": "Page only. Optional order among enabled Pages; lower numbers appear first and empty values appear after numbered Pages.",
         "id": "~%3EIP",
-        "name": "Navigation Order",
+        "name": "Page:Navigation order",
         "number": {
           "format": "number"
         },
         "type": "number"
       },
-      "Publish Date": {
+      "Post:Publish date": {
         "date": {},
-        "description": null,
+        "description": "Post only. Required when Published; Musubi uses the start date and ignores any time or range end.",
         "id": "dp_o",
-        "name": "Publish Date",
+        "name": "Post:Publish date",
         "type": "date"
       },
-      "Show in Navigation": {
+      "Page:Navigation": {
         "checkbox": {},
-        "description": null,
+        "description": "Page only. Enable to show this Published Page after Home and Blog.",
         "id": "eCNL",
-        "name": "Show in Navigation",
+        "name": "Page:Navigation",
         "type": "checkbox"
       },
       "Slug": {
-        "description": null,
+        "description": "URL segment for Post and Page. Leave empty for Home.",
         "id": "A%3Cgx",
         "name": "Slug",
         "rich_text": {},
         "type": "rich_text"
       },
       "Status": {
-        "description": null,
+        "description": "Draft is private. Published is included in the next build.",
         "id": "ece115aa-d10f-4ea0-83b3-ea2a43e6e71e",
         "name": "Status",
         "select": {
@@ -950,115 +858,15 @@
         },
         "type": "select"
       },
-      "Tags": {
-        "description": null,
-        "id": "0d131b96-a11a-4078-85a2-06eef84c7be6",
-        "multi_select": {
-          "options": [
-            {
-              "color": "yellow",
-              "description": null,
-              "id": "b67fb051-ddd9-43b5-9fdf-7b7f97a2e056",
-              "name": "Jekyll"
-            },
-            {
-              "color": "pink",
-              "description": null,
-              "id": "2382b30f-9881-4a8b-ae7f-2d34979c4fb9",
-              "name": "Website"
-            },
-            {
-              "color": "blue",
-              "description": null,
-              "id": "674b2636-c585-4057-8a6d-0d6ab9718f90",
-              "name": "Cooking"
-            },
-            {
-              "color": "red",
-              "description": null,
-              "id": "499d31ac-26f2-4fed-9ec4-17afe3c6d90d",
-              "name": "Sociology"
-            },
-            {
-              "color": "orange",
-              "description": null,
-              "id": "38611f8e-ab81-4a71-8d40-7bad1370b26a",
-              "name": "TEMP"
-            },
-            {
-              "color": "purple",
-              "description": null,
-              "id": "1ad9233c-079a-44c7-98c3-24ed2faf1879",
-              "name": "Book"
-            },
-            {
-              "color": "default",
-              "description": null,
-              "id": "a3d8eb51-77ce-4e83-a9ae-68da9cee63fa",
-              "name": "Design"
-            },
-            {
-              "color": "brown",
-              "description": null,
-              "id": "faa335e8-ade9-4a5c-a37f-7ef02b33312d",
-              "name": "读书笔记"
-            },
-            {
-              "color": "blue",
-              "description": null,
-              "id": "3e0d2a96-7198-4eba-91bd-9f4092539d58",
-              "name": "TypeScript"
-            },
-            {
-              "color": "yellow",
-              "description": null,
-              "id": "8fc74ab9-ed21-46b0-b066-fb2a0af87358",
-              "name": "JavaScript"
-            },
-            {
-              "color": "purple",
-              "description": null,
-              "id": "bc29b07d-5582-4af2-9981-a88b705c66e0",
-              "name": "CSS"
-            },
-            {
-              "color": "green",
-              "description": null,
-              "id": "9c49dfc4-edb8-4c24-95bf-35aa5549e1ed",
-              "name": "Tooling"
-            },
-            {
-              "color": "pink",
-              "description": null,
-              "id": "db3d3f0b-413a-4711-aff0-fea1bc30bb84",
-              "name": "React"
-            },
-            {
-              "color": "orange",
-              "description": null,
-              "id": "57e885b9-bfdb-4f54-bf9b-458ae37c1e20",
-              "name": "HTML"
-            },
-            {
-              "color": "blue",
-              "description": null,
-              "id": "8ee26c03-c874-4114-a2dd-e10cc9ea46dd",
-              "name": "Frontend"
-            }
-          ]
-        },
-        "name": "Tags",
-        "type": "multi_select"
-      },
       "Title": {
-        "description": null,
+        "description": "Published title. Required for Post, Page, and Home.",
         "id": "title",
         "name": "Title",
         "title": {},
         "type": "title"
       },
       "Type": {
-        "description": null,
+        "description": "Post publishes under /blog, Page at /:slug, and Home adds optional content to /.",
         "id": "c832da20-339d-4a80-9a7b-62f98d5a8996",
         "name": "Type",
         "select": {

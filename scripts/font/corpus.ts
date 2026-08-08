@@ -42,9 +42,7 @@ export function createPublicFontCorpora(site: Site): FontCorpora {
   const documents = contents.map((page) => extractFontCorporaFromAst(page.document))
   const configText = Object.values(site.config).join('\n')
   const navigationText = site.navigation.map((item) => item.title).join('\n')
-  const metadataText = contents
-    .flatMap((page) => [page.title, page.description, ...page.tags])
-    .join('\n')
+  const metadataText = contents.flatMap((page) => [page.title, page.description]).join('\n')
   const renderedDates = site.posts
     .map((page) => formatPublishedDate(page.date, site.config))
     .join('\n')

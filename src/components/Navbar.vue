@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { Link, useRouter } from '@void/vue'
-import { nextTick, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
+import { primaryNavigationItems } from '#shared/site/navigation'
 import type { NavigationItem, SiteConfig } from '#shared/site/types'
 import ColorModeToggle from './ColorModeToggle.vue'
 import TypographyText from './TypographyText.vue'
 
-defineProps<{
+const props = defineProps<{
   config: SiteConfig
   navigation: NavigationItem[]
 }>()
 
 const router = useRouter()
 const navigationViewport = ref<HTMLElement>()
+const primaryNavigation = computed(() => primaryNavigationItems(props.navigation))
 
 function isCurrent(target: string): boolean {
   if (target === '/') return router.path === '/'
@@ -51,15 +53,12 @@ watch(
             >Primary navigation</span
           >
           <nav class="site-navigation" aria-labelledby="primary-navigation-label">
-            <Link href="/" :aria-current="isCurrent('/') ? 'page' : undefined" lang="en">Home</Link>
-            <Link href="/blog" :aria-current="isCurrent('/blog') ? 'page' : undefined" lang="en"
-              >Blog</Link
-            >
             <Link
-              v-for="item in navigation"
+              v-for="item in primaryNavigation"
               :key="item.route"
               :href="item.route"
               :aria-current="isCurrent(item.route) ? 'page' : undefined"
+              :lang="item.lang"
             >
               <TypographyText :value="item.title" />
             </Link>

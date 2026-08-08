@@ -17,6 +17,16 @@ describe('Notion page inputs', () => {
     })
   })
 
+  it('does not accept former database-ID environment aliases', () => {
+    expect(() =>
+      readNotionEnvironment({
+        NOTION_TOKEN: 'token',
+        NOTION_CONTENT_DATABASE_ID: 'content-page',
+        NOTION_CONFIG_DATABASE_ID: 'config-page',
+      }),
+    ).toThrow('Missing required build environment variable NOTION_DB_PAGE_ID')
+  })
+
   it("selects the page's only data source internally", () => {
     expect(
       onlyDataSourceId('Database page', [

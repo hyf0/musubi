@@ -39,13 +39,7 @@ export function readNotionEnvironment(
   const required = (
     name: 'NOTION_TOKEN' | 'NOTION_DB_PAGE_ID' | 'NOTION_CONFIG_PAGE_ID',
   ): string => {
-    const legacyName =
-      name === 'NOTION_DB_PAGE_ID'
-        ? 'NOTION_CONTENT_DATABASE_ID'
-        : name === 'NOTION_CONFIG_PAGE_ID'
-          ? 'NOTION_CONFIG_DATABASE_ID'
-          : undefined
-    const value = environment[name]?.trim() || (legacyName && environment[legacyName]?.trim())
+    const value = environment[name]?.trim()
     if (!value) throw new Error(`Missing required build environment variable ${name}`)
     return value
   }

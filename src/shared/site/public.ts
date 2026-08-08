@@ -8,7 +8,6 @@ interface PublicContent {
   slug: string
   route: string
   description: string
-  tags: string[]
   document: PublicDocument
 }
 
@@ -71,7 +70,6 @@ export function toPublicPost(post: Post): PublicPost {
     type: post.type,
     date: post.date,
     description: post.description,
-    tags: post.tags,
     document: toPublicDocument(post.document),
   }
 }
@@ -83,7 +81,6 @@ export function toPublicStandalonePage(page: Page): PublicStandalonePage {
     route: page.route,
     type: page.type,
     description: page.description,
-    tags: page.tags,
     document: toPublicDocument(page.document),
   }
 }

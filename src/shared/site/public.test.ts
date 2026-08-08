@@ -19,7 +19,6 @@ describe('public site data', () => {
       type: 'Post',
       date: '2026-07-23',
       description: '',
-      tags: [],
       document,
     }
     const page: Page = {
@@ -29,7 +28,6 @@ describe('public site data', () => {
       route: '/page',
       type: 'Page',
       description: '',
-      tags: [],
       showInNavigation: true,
       document,
     }
@@ -40,7 +38,6 @@ describe('public site data', () => {
       route: '/',
       type: 'Home',
       description: '',
-      tags: [],
       document,
     }
 

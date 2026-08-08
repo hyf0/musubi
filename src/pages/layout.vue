@@ -9,7 +9,7 @@ import Navbar from '../components/Navbar.vue'
 import { siteLinkKey } from '../lib/site/link.ts'
 
 const shell = useShared()
-provide(siteLinkKey, shell.config.link)
+provide(siteLinkKey, shell.config.siteUrl)
 </script>
 
 <template>

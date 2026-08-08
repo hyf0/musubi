@@ -47,17 +47,33 @@ export function normalizeSlug(rawSlug: string, sourceLabel: string): string {
   return slug
 }
 
-function validateDate(date: string | undefined, row: SourceContentRow): string | undefined {
+function normalizePublicationDate(
+  date: string | undefined,
+  row: SourceContentRow,
+): string | undefined {
   if (!date) {
     if (row.type === 'Post') {
-      throw new Error(`${row.sourceLabel}: Published Post requires a Publish Date`)
+      throw new Error(`${row.sourceLabel}: Published Post requires Post:Publish date`)
     }
     return undefined
   }
-  if (!Number.isFinite(Date.parse(date))) {
-    throw new Error(`${row.sourceLabel}: Publish Date must be a valid ISO date or date-time`)
+  const match = /^(\d{4})-(\d{2})-(\d{2})(?:$|T)/u.exec(date)
+  if (!match) {
+    throw new Error(
+      `${row.sourceLabel}: Post:Publish date start must begin with a valid YYYY-MM-DD calendar date`,
+    )
   }
-  return date
+  const year = Number(match[1])
+  const month = Number(match[2])
+  const day = Number(match[3])
+  const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)
+  const daysInMonth = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+  if (year < 1 || month < 1 || month > 12 || day < 1 || day > daysInMonth[month - 1]!) {
+    throw new Error(
+      `${row.sourceLabel}: Post:Publish date start must begin with a valid YYYY-MM-DD calendar date`,
+    )
+  }
+  return `${match[1]}-${match[2]}-${match[3]}`
 }
 
 function normalizePublishedRow(row: SourceContentRow): PublishedPageMeta {
@@ -67,9 +83,6 @@ function normalizePublishedRow(row: SourceContentRow): PublishedPageMeta {
   }
   // Home owns `/` outright, so it carries no path segment and never reads Slug.
   if (row.type === 'Home') {
-    if (row.slug.trim()) {
-      throw new Error(`${row.sourceLabel}: Home occupies \`/\` and must leave Slug empty`)
-    }
     return {
       sourceLabel: row.sourceLabel,
       title,
@@ -79,8 +92,7 @@ function normalizePublishedRow(row: SourceContentRow): PublishedPageMeta {
       // reaches a PublishedPageMeta unvalidated, so it is empty rather than unread.
       date: undefined,
       type: 'Home',
-      description: row.description.trim(),
-      tags: [...new Set(row.tags.map((tag) => tag.trim()).filter(Boolean))].sort(compareText),
+      description: '',
       showInNavigation: false,
     }
   }
@@ -91,17 +103,23 @@ function normalizePublishedRow(row: SourceContentRow): PublishedPageMeta {
       `${row.sourceLabel}: Slug ${JSON.stringify(slug)} occupies a reserved ${row.type} route namespace`,
     )
   }
+  if (
+    row.type === 'Page' &&
+    row.navigationOrder !== undefined &&
+    !Number.isFinite(row.navigationOrder)
+  ) {
+    throw new Error(`${row.sourceLabel}: Page:Navigation order must be a finite number`)
+  }
   return {
     sourceLabel: row.sourceLabel,
     title,
     slug,
     route: row.type === 'Post' ? `/blog/${slug}` : `/${slug}`,
-    date: validateDate(row.date, row),
+    date: row.type === 'Post' ? normalizePublicationDate(row.date, row) : undefined,
     type: row.type,
     description: row.description.trim(),
-    tags: [...new Set(row.tags.map((tag) => tag.trim()).filter(Boolean))].sort(compareText),
-    showInNavigation: row.showInNavigation ?? false,
-    navigationOrder: row.navigationOrder,
+    showInNavigation: row.type === 'Page' ? (row.showInNavigation ?? false) : false,
+    navigationOrder: row.type === 'Page' ? row.navigationOrder : undefined,
   }
 }
 
@@ -179,7 +197,7 @@ export function buildRouteManifest(
   const posts = published
     .filter((page) => page.type === 'Post')
     .sort((left, right) => {
-      const byDate = Date.parse(right.date!) - Date.parse(left.date!)
+      const byDate = compareText(right.date!, left.date!)
       return byDate || compareText(left.title, right.title) || compareText(left.slug, right.slug)
     })
   const standalonePages = published
